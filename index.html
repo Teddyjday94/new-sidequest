@@ -346,6 +346,73 @@
     display:block;
   }
 
+  .work-frame{
+    height:140px;
+    overflow:hidden;
+    position:relative;
+    background:#000;
+  }
+  .work-frame iframe{
+    width:400%;
+    height:400%;
+    transform:scale(0.25);
+    transform-origin:top left;
+    border:0;
+    pointer-events:none;
+  }
+  .work-card--live .work-body{padding-top:18px;}
+
+  .work-visit{
+    display:inline-block;
+    margin-top:14px;
+    font-size:0.85rem;
+    color:var(--signal-2);
+    border-bottom:1px solid rgba(63,224,208,0.35);
+    padding-bottom:1px;
+  }
+  .work-visit:hover{border-color:var(--signal-2);}
+
+  .reveal{
+    opacity:0;
+    transform:translateY(18px);
+    transition:opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.is-visible{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  @keyframes pulseGlow{
+    0%, 100%{box-shadow:0 0 0 rgba(124,108,255,0.0);}
+    50%{box-shadow:0 0 26px rgba(124,108,255,0.28);}
+  }
+  .logo-mark{
+    animation:spinMark 7s linear infinite;
+  }
+  @keyframes spinMark{
+    0%{transform:rotate(45deg);}
+    100%{transform:rotate(405deg);}
+  }
+
+  .service-icon{
+    animation:floatIcon 4.5s ease-in-out infinite;
+  }
+  .service-card:nth-child(2) .service-icon{animation-delay:0.5s;}
+  .service-card:nth-child(3) .service-icon{animation-delay:1s;}
+  @keyframes floatIcon{
+    0%, 100%{transform:translateY(0);}
+    50%{transform:translateY(-4px);}
+  }
+
+  .cta-band{
+    animation:pulseGlow 5s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1; transform:none; transition:none;}
+    .logo-mark, .service-icon, .cta-band{animation:none;}
+  }
+
   /* ---------- PROCESS ---------- */
 
   .process-list{
@@ -590,6 +657,30 @@
         </div>
       </div>
 
+      <div class="work-card work-card--live">
+        <div class="work-frame">
+          <iframe src="https://targaryan.vercel.app" loading="lazy" title="The Black Queen campaign site preview"></iframe>
+        </div>
+        <div class="work-body">
+          <span class="work-tag">Fan campaign site</span>
+          <h3>The Black Queen</h3>
+          <p>An interactive Game of Thrones campaign hub with a live map, dragon roster, and house allegiance system.</p>
+          <a class="work-visit" href="https://targaryan.vercel.app" target="_blank" rel="noopener">Visit site</a>
+        </div>
+      </div>
+
+      <div class="work-card work-card--live">
+        <div class="work-frame">
+          <iframe src="https://cinderellas-pet-palace.vercel.app" loading="lazy" title="Cinderella's Pet Palace preview"></iframe>
+        </div>
+        <div class="work-body">
+          <span class="work-tag">Pet care</span>
+          <h3>Cinderella's Pet Palace</h3>
+          <p>A pet care business site built to introduce the shop and its services at a glance.</p>
+          <a class="work-visit" href="https://cinderellas-pet-palace.vercel.app" target="_blank" rel="noopener">Visit site</a>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -792,6 +883,28 @@
     setTimeout(frame, 50);
     setTimeout(frame, 100);
   }
+})();
+
+// Scroll reveal: one clean fade-and-rise per section head, staggered cards beneath it
+(function(){
+  const targets = document.querySelectorAll(
+    '.section-head, .service-card, .work-card, .process-step'
+  );
+  targets.forEach((el, i) => {
+    el.classList.add('reveal');
+    el.style.transitionDelay = (i % 4) * 70 + 'ms';
+  });
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting){
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  targets.forEach(el => io.observe(el));
 })();
 </script>
 
