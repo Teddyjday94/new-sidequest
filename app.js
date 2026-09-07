@@ -54,7 +54,7 @@
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.25;
+      renderer.toneMappingExposure = 1.35;
 
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
@@ -62,13 +62,13 @@
       const geometry = new THREE.SphereGeometry(1, 128, 128);
       const positionAttribute = geometry.attributes.position;
       const basePositions = new Float32Array(positionAttribute.array);
-      const material = new THREE.MeshPhysicalMaterial({ color: 0x075126, metalness: 0.72, roughness: 0.2, clearcoat: 1, clearcoatRoughness: 0.08, iridescence: 0.45, iridescenceIOR: 1.35, transparent: true, opacity: 0.94 });
+      const material = new THREE.MeshPhysicalMaterial({ color: 0x0a8f46, metalness: 0.42, roughness: 0.18, clearcoat: 1, clearcoatRoughness: 0.08, iridescence: 0.45, iridescenceIOR: 1.35, emissive: 0x062c17, emissiveIntensity: 0.55, transparent: true, opacity: 0.96 });
       const mesh = new THREE.Mesh(geometry, material);
       scene.add(mesh);
-      scene.add(new THREE.AmbientLight(0x0b2414, 1.2));
-      const key = new THREE.DirectionalLight(0xcaffdf, 3.8); key.position.set(-2, 3, 4); scene.add(key);
-      const emerald = new THREE.PointLight(0x14ff71, 7, 8); emerald.position.set(2, -1, 2); scene.add(emerald);
-      const lime = new THREE.PointLight(0x9cff55, 4, 7); lime.position.set(-2, 1, 1); scene.add(lime);
+      scene.add(new THREE.HemisphereLight(0xcaffdf, 0x031b0b, 2.2));
+      const key = new THREE.DirectionalLight(0xe4fff0, 6); key.position.set(-2, 3, 4); scene.add(key);
+      const emerald = new THREE.PointLight(0x21ff87, 10, 8); emerald.position.set(2, -1, 2); scene.add(emerald);
+      const lime = new THREE.PointLight(0xb5ff72, 6, 7); lime.position.set(-2, 1, 1); scene.add(lime);
 
       function deform(time) {
         for (let index = 0; index < positionAttribute.count; index += 1) {
