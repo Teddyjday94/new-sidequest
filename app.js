@@ -36,16 +36,13 @@
     });
 
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && links.classList.contains('is-open')) {
-        close(true);
-      }
+      if (event.key === 'Escape' && links.classList.contains('is-open')) close(true);
     });
   }
 
   function initReveals() {
     const elements = [...document.querySelectorAll('.reveal')];
     if (!elements.length) return;
-
     if (reduceMotionQuery.matches || !('IntersectionObserver' in window)) {
       elements.forEach((element) => element.classList.add('is-visible'));
       return;
@@ -97,149 +94,188 @@
     const canvas = document.getElementById('chrome-object');
     if (!canvas) return;
 
-    const context = canvas.getContext('2d');
-    if (!context) return;
+    const gl = canvas.getContext('webgl', { alpha: true, antialias: true, premultipliedAlpha: false });
+    if (!gl) {
+      initChromeFallback(canvas);
+      return;
+    }
 
+    const vertexSource = `
+      attribute vec2 position;
+      void main() { gl_Position = vec4(position, 0.0, 1.0); }
+    `;
+    const fragmentSource = `
+      precision highp float;
+      uniform vec2 resolution;
+      uniform float time;
+      uniform vec2 pointer;
+
+      #define PI 3.14159265359
+
+      float hash21(vec2 p) {
+        p = fract(p * vec2(123.34, 456.21));
+        p += dot(p, p + 45.32);
+        return fract(p.x * p.y);
+      }
+
+      float noise(vec3 p) {
+        vec3 i = floor(p);
+        vec3 f = fract(p);
+        f = f * f * (3.0 - 2.0 * f);
+        float n = i.x + i.y * 57.0 + i.z * 113.0;
+        float a = hash21(vec2(n, n + 1.0));
+        float b = hash21(vec2(n + 57.0, n + 58.0));
+        float c = hash21(vec2(n + 113.0, n + 114.0));
+        float d = hash21(vec2(n + 170.0, n + 171.0));
+        float e = mix(a, b, f.x);
+        float g = mix(c, d, f.x);
+        return mix(e, g, f.y + f.z * 0.18);
+      }
+
+      float fbm(vec3 p) {
+        float value = 0.0;
+        float amplitude = 0.5;
+        for (int i = 0; i < 5; i++) {
+          value += amplitude * noise(p);
+          p = p * 2.03 + vec3(3.1, 1.7, 2.4);
+          amplitude *= 0.5;
+        }
+        return value;
+      }
+
+      float scene(vec3 p) {
+        float flow = fbm(p * 2.1 + vec3(time * 0.12, -time * 0.09, time * 0.08));
+        float detail = noise(p * 7.0 - vec3(time * 0.18));
+        return length(p) - (0.78 + (flow - 0.5) * 0.12 + (detail - 0.5) * 0.025);
+      }
+
+      vec3 getNormal(vec3 p) {
+        vec2 e = vec2(0.002, 0.0);
+        return normalize(vec3(
+          scene(p + e.xyy) - scene(p - e.xyy),
+          scene(p + e.yxy) - scene(p - e.yxy),
+          scene(p + e.yyx) - scene(p - e.yyx)
+        ));
+      }
+
+      void main() {
+        vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
+        uv.x -= pointer.x * 0.035;
+        uv.y += pointer.y * 0.035;
+        vec3 rayOrigin = vec3(0.0, 0.0, 2.7);
+        vec3 rayDirection = normalize(vec3(uv * 0.92, -2.35));
+        float distanceTravelled = 0.0;
+        float hit = 0.0;
+        vec3 position = rayOrigin;
+
+        for (int i = 0; i < 72; i++) {
+          position = rayOrigin + rayDirection * distanceTravelled;
+          float distanceToSurface = scene(position);
+          if (distanceToSurface < 0.001) { hit = 1.0; break; }
+          distanceTravelled += distanceToSurface * 0.68;
+          if (distanceTravelled > 5.0) break;
+        }
+
+        if (hit < 0.5) discard;
+
+        vec3 normal = getNormal(position);
+        vec3 lightDirection = normalize(vec3(-0.6, 0.8, 1.0));
+        float diffuse = max(dot(normal, lightDirection), 0.0);
+        float fresnel = pow(1.0 - max(dot(normal, -rayDirection), 0.0), 2.8);
+        float liquid = fbm(position * 3.4 + vec3(time * 0.16, time * 0.08, -time * 0.11));
+        float bands = sin((position.x * 5.2 + position.y * 4.3 + position.z * 7.0) + liquid * 8.0 + time * 0.65);
+        bands = smoothstep(-0.38, 0.55, bands);
+
+        vec3 cyan = vec3(0.03, 0.82, 1.0);
+        vec3 blue = vec3(0.16, 0.24, 0.92);
+        vec3 violet = vec3(0.56, 0.05, 0.78);
+        vec3 pink = vec3(1.0, 0.08, 0.62);
+        vec3 color = mix(blue, violet, smoothstep(0.18, 0.78, liquid));
+        color = mix(color, cyan, bands * 0.52 + diffuse * 0.32);
+        color = mix(color, pink, smoothstep(0.62, 0.96, liquid) * (1.0 - diffuse) * 0.72);
+
+        float specular = pow(max(dot(reflect(-lightDirection, normal), -rayDirection), 0.0), 34.0);
+        color += vec3(0.72, 0.96, 1.0) * specular * 1.15;
+        color += vec3(0.32, 0.82, 1.0) * fresnel * 0.42;
+        color *= 0.74 + diffuse * 0.52;
+
+        float edge = smoothstep(0.04, 0.5, fresnel);
+        gl_FragColor = vec4(color, 0.92 + edge * 0.08);
+      }
+    `;
+
+    const compile = (type, source) => {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) return null;
+      return shader;
+    };
+
+    const vertexShader = compile(gl.VERTEX_SHADER, vertexSource);
+    const fragmentShader = compile(gl.FRAGMENT_SHADER, fragmentSource);
+    if (!vertexShader || !fragmentShader) {
+      initChromeFallback(canvas);
+      return;
+    }
+
+    const program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      initChromeFallback(canvas);
+      return;
+    }
+
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    gl.useProgram(program);
+    const position = gl.getAttribLocation(program, 'position');
+    gl.enableVertexAttribArray(position);
+    gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+    const resolution = gl.getUniformLocation(program, 'resolution');
+    const time = gl.getUniformLocation(program, 'time');
+    const pointer = gl.getUniformLocation(program, 'pointer');
     let width = 0;
     let height = 0;
-    let pixelRatio = 1;
     let frameId = 0;
     let lastFrame = 0;
     let pointerX = 0;
     let pointerY = 0;
     let easedX = 0;
     let easedY = 0;
-    let phase = 0;
     let paused = document.hidden;
-
-    const blobs = Array.from({ length: 24 }, (_, index) => ({
-      angle: index * 2.39996,
-      distance: 0.1 + ((index * 37) % 71) / 100,
-      size: 0.12 + ((index * 19) % 21) / 100,
-      hue: index % 3,
-      drift: 0.35 + ((index * 11) % 17) / 20
-    }));
 
     function resize() {
       const rect = canvas.getBoundingClientRect();
       width = Math.max(1, rect.width);
       height = Math.max(1, rect.height);
-      pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.round(width * pixelRatio);
-      canvas.height = Math.round(height * pixelRatio);
-      context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-      draw();
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(width * ratio);
+      canvas.height = Math.round(height * ratio);
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      draw(0);
     }
 
-    function spherePath(centerX, centerY, radius, time) {
-      const points = 96;
-      context.beginPath();
-      for (let index = 0; index <= points; index += 1) {
-        const angle = (index / points) * Math.PI * 2;
-        const wobble = 1 + 0.035 * Math.sin(angle * 3 + time * 1.4) + 0.022 * Math.sin(angle * 7 - time * 0.9);
-        const x = centerX + Math.cos(angle) * radius * wobble;
-        const y = centerY + Math.sin(angle) * radius * wobble;
-        if (index === 0) context.moveTo(x, y);
-        else context.lineTo(x, y);
-      }
-      context.closePath();
-    }
-
-    function paintBlob(centerX, centerY, radius, blob, time) {
-      const drift = time * blob.drift;
-      const angle = blob.angle + drift * 0.18;
-      const distance = radius * (blob.distance * 0.76 + Math.sin(drift + blob.angle) * 0.07);
-      const x = centerX + Math.cos(angle) * distance;
-      const y = centerY + Math.sin(angle) * distance * 0.82;
-      const size = radius * (blob.size + Math.sin(drift * 1.3) * 0.025);
-      const color = blob.hue === 0 ? 'rgba(18, 220, 255, 0.62)' : blob.hue === 1 ? 'rgba(244, 50, 210, 0.56)' : 'rgba(101, 75, 255, 0.58)';
-
-      context.save();
-      context.translate(x, y);
-      context.rotate(angle + Math.sin(drift) * 0.5);
-      context.scale(1, 0.62 + Math.sin(blob.angle) * 0.14);
-      context.filter = 'blur(12px)';
-      const gradient = context.createRadialGradient(-size * 0.3, -size * 0.35, 0, 0, 0, size);
-      gradient.addColorStop(0, 'rgba(255, 255, 255, 0.76)');
-      gradient.addColorStop(0.2, color);
-      gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      context.fillStyle = gradient;
-      context.beginPath();
-      context.ellipse(0, 0, size, size * 0.72, 0, 0, Math.PI * 2);
-      context.fill();
-      context.restore();
-    }
-
-    function draw() {
+    function draw(timestamp) {
       if (!width || !height) return;
-
-      context.clearRect(0, 0, width, height);
       easedX += (pointerX - easedX) * 0.045;
       easedY += (pointerY - easedY) * 0.045;
-
-      const centerX = width * (0.54 + easedX * 0.025);
-      const centerY = height * (0.48 + easedY * 0.025);
-      const radius = Math.min(width, height) * 0.365;
-      const lightX = centerX - radius * (0.35 + easedX * 0.12);
-      const lightY = centerY - radius * (0.38 + easedY * 0.08);
-
-      context.save();
-      spherePath(centerX, centerY, radius, phase);
-      context.clip();
-
-      const base = context.createRadialGradient(lightX, lightY, radius * 0.04, centerX, centerY, radius * 1.15);
-      base.addColorStop(0, '#f6ffff');
-      base.addColorStop(0.16, '#91edff');
-      base.addColorStop(0.42, '#5276de');
-      base.addColorStop(0.7, '#8327ad');
-      base.addColorStop(0.9, '#1b2369');
-      base.addColorStop(1, '#070b2b');
-      context.fillStyle = base;
-      context.fillRect(centerX - radius, centerY - radius, radius * 2, radius * 2);
-
-      context.globalCompositeOperation = 'screen';
-      blobs.forEach((blob) => paintBlob(centerX, centerY, radius, blob, phase));
-
-      const sheen = context.createRadialGradient(lightX, lightY, 0, lightX, lightY, radius * 0.82);
-      sheen.addColorStop(0, 'rgba(255, 255, 255, 0.7)');
-      sheen.addColorStop(0.13, 'rgba(224, 255, 255, 0.2)');
-      sheen.addColorStop(0.55, 'rgba(255, 255, 255, 0.02)');
-      sheen.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      context.fillStyle = sheen;
-      context.fillRect(centerX - radius, centerY - radius, radius * 2, radius * 2);
-      context.restore();
-
-      context.save();
-      spherePath(centerX, centerY, radius, phase);
-      context.strokeStyle = 'rgba(210, 255, 255, 0.58)';
-      context.lineWidth = Math.max(1, radius * 0.012);
-      context.shadowColor = 'rgba(99, 243, 255, 0.65)';
-      context.shadowBlur = radius * 0.12;
-      context.stroke();
-      context.restore();
-
-      context.save();
-      context.translate(lightX, lightY);
-      context.rotate(-0.35 + easedX * 0.15);
-      context.scale(1, 0.42);
-      context.filter = 'blur(15px)';
-      const highlight = context.createRadialGradient(0, 0, 0, 0, 0, radius * 0.32);
-      highlight.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
-      highlight.addColorStop(0.24, 'rgba(219, 255, 255, 0.38)');
-      highlight.addColorStop(1, 'rgba(255, 255, 255, 0)');
-      context.fillStyle = highlight;
-      context.beginPath();
-      context.ellipse(0, 0, radius * 0.32, radius * 0.18, 0, 0, Math.PI * 2);
-      context.fill();
-      context.restore();
+      gl.uniform2f(resolution, canvas.width, canvas.height);
+      gl.uniform1f(time, timestamp * 0.001);
+      gl.uniform2f(pointer, easedX, easedY);
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
 
     function tick(timestamp) {
       if (paused) return;
-      if (timestamp - lastFrame >= 1000 / 30) {
+      if (timestamp - lastFrame >= 1000 / 45) {
         lastFrame = timestamp;
-        phase += 0.012;
-        draw();
+        draw(timestamp);
       }
       frameId = window.requestAnimationFrame(tick);
     }
@@ -253,26 +289,46 @@
 
     function handleVisibility() {
       paused = document.hidden;
-      if (paused) {
-        window.cancelAnimationFrame(frameId);
-      } else if (!reduceMotionQuery.matches) {
-        frameId = window.requestAnimationFrame(tick);
-      }
+      if (paused) window.cancelAnimationFrame(frameId);
+      else if (!reduceMotionQuery.matches) frameId = window.requestAnimationFrame(tick);
     }
 
-    if ('ResizeObserver' in window) {
-      new ResizeObserver(resize).observe(canvas);
-    } else {
+    if ('ResizeObserver' in window) new ResizeObserver(resize).observe(canvas);
+    else {
       window.addEventListener('resize', resize);
       resize();
     }
-
     window.addEventListener('pointermove', handlePointer, { passive: true });
     document.addEventListener('visibilitychange', handleVisibility);
-
     resize();
-    if (!reduceMotionQuery.matches) {
-      frameId = window.requestAnimationFrame(tick);
-    }
+    if (!reduceMotionQuery.matches) frameId = window.requestAnimationFrame(tick);
+  }
+
+  function initChromeFallback(canvas) {
+    const context = canvas.getContext('2d');
+    if (!context) return;
+    const draw = () => {
+      const rect = canvas.getBoundingClientRect();
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(rect.width * ratio);
+      canvas.height = Math.round(rect.height * ratio);
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      const radius = Math.min(rect.width, rect.height) * 0.365;
+      const x = rect.width * 0.54;
+      const y = rect.height * 0.48;
+      const gradient = context.createRadialGradient(x - radius * 0.3, y - radius * 0.36, 0, x, y, radius);
+      gradient.addColorStop(0, '#efffff');
+      gradient.addColorStop(0.22, '#52dfff');
+      gradient.addColorStop(0.62, '#6935c7');
+      gradient.addColorStop(1, '#10175a');
+      context.clearRect(0, 0, rect.width, rect.height);
+      context.fillStyle = gradient;
+      context.beginPath();
+      context.arc(x, y, radius, 0, Math.PI * 2);
+      context.fill();
+    };
+    if ('ResizeObserver' in window) new ResizeObserver(draw).observe(canvas);
+    else window.addEventListener('resize', draw);
+    draw();
   }
 }());
