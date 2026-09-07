@@ -339,7 +339,7 @@ canvas {
   border-color: var(--paper);
 }
 
-#chrome-object {
+.emerald-orb {
   position: absolute;
   z-index: 2;
   top: 70px;
@@ -348,7 +348,69 @@ canvas {
   max-width: none;
   height: calc(100% - 70px);
   pointer-events: none;
-  filter: drop-shadow(-40px 45px 50px rgba(0, 0, 0, 0.7));
+  animation: orb-drift 9s ease-in-out infinite;
+  isolation: isolate;
+}
+
+.emerald-orb::before,
+.emerald-orb::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.emerald-orb::before {
+  width: min(68%, 560px);
+  aspect-ratio: 1;
+  background: radial-gradient(circle, rgba(72, 255, 132, 0.38) 0, rgba(21, 241, 93, 0.15) 38%, rgba(4, 109, 43, 0) 72%);
+  filter: blur(28px);
+  animation: orb-bloom 4.8s ease-in-out infinite;
+}
+
+.emerald-orb::after {
+  width: min(51%, 420px);
+  aspect-ratio: 1;
+  border: 1px solid rgba(133, 255, 170, 0.17);
+  box-shadow: 0 0 48px rgba(31, 255, 103, 0.23), inset 0 0 38px rgba(31, 255, 103, 0.09);
+  animation: orb-halo 5.6s ease-in-out infinite;
+}
+
+.emerald-orb__fallback,
+#chrome-object {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.emerald-orb__fallback {
+  object-fit: contain;
+  opacity: 0.94;
+  filter: saturate(1.16) contrast(1.05) drop-shadow(0 0 22px rgba(59, 255, 122, 0.7)) drop-shadow(-28px 38px 42px rgba(0, 0, 0, 0.72));
+  -webkit-mask-image: radial-gradient(circle at center, #000 0 41%, rgba(0, 0, 0, 0.96) 43%, transparent 49%);
+  mask-image: radial-gradient(circle at center, #000 0 41%, rgba(0, 0, 0, 0.96) 43%, transparent 49%);
+  animation: orb-fallback-turn 42s linear infinite;
+  transition: opacity 700ms ease;
+}
+
+#chrome-object {
+  max-width: none;
+  opacity: 0;
+  filter: drop-shadow(0 0 25px rgba(45, 255, 112, 0.8)) drop-shadow(-40px 45px 50px rgba(0, 0, 0, 0.7));
+  transition: opacity 700ms ease;
+}
+
+.emerald-orb[data-orb-mode="webgl"] #chrome-object {
+  opacity: 1;
+}
+
+.emerald-orb[data-orb-mode="webgl"] .emerald-orb__fallback {
+  opacity: 0;
 }
 
 .hero-side {
@@ -851,12 +913,31 @@ canvas {
   transform: none;
 }
 
+@keyframes orb-drift {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(-0.8deg); }
+  50% { transform: translate3d(-10px, -14px, 0) rotate(0.8deg); }
+}
+
+@keyframes orb-bloom {
+  0%, 100% { opacity: 0.68; transform: translate(-50%, -50%) scale(0.94); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+}
+
+@keyframes orb-halo {
+  0%, 100% { opacity: 0.28; transform: translate(-50%, -50%) scale(0.9); }
+  50% { opacity: 0.72; transform: translate(-50%, -50%) scale(1.07); }
+}
+
+@keyframes orb-fallback-turn {
+  to { transform: rotate(1turn); }
+}
+
 @media (max-width: 980px) {
   .hero-content {
     width: min(720px, 82vw);
   }
 
-  #chrome-object {
+  .emerald-orb {
     right: -210px;
     width: 720px;
     opacity: 0.72;
@@ -953,7 +1034,7 @@ canvas {
     max-width: 430px;
   }
 
-  #chrome-object {
+  .emerald-orb {
     top: 90px;
     right: -300px;
     width: 680px;

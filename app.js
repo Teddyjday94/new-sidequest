@@ -17,125 +17,250 @@
     const toggle = document.getElementById('menu-toggle');
     const links = document.getElementById('nav-links');
     if (!toggle || !links) return;
-    const close = (returnFocus) => { links.classList.remove('is-open'); toggle.setAttribute('aria-expanded', 'false'); if (returnFocus) toggle.focus(); };
-    toggle.addEventListener('click', () => { const isOpen = toggle.getAttribute('aria-expanded') === 'true'; links.classList.toggle('is-open', !isOpen); toggle.setAttribute('aria-expanded', String(!isOpen)); });
-    links.addEventListener('click', (event) => { if (event.target.closest('a')) close(false); });
-    document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && links.classList.contains('is-open')) close(true); });
+    const close = (returnFocus) => {
+      links.classList.remove('is-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      if (returnFocus) toggle.focus();
+    };
+    toggle.addEventListener('click', () => {
+      const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+      links.classList.toggle('is-open', !isOpen);
+      toggle.setAttribute('aria-expanded', String(!isOpen));
+    });
+    links.addEventListener('click', (event) => {
+      if (event.target.closest('a')) close(false);
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && links.classList.contains('is-open')) close(true);
+    });
   }
 
   function initReveals() {
     const elements = [...document.querySelectorAll('.reveal')];
     if (!elements.length) return;
-    if (reduceMotionQuery.matches || !('IntersectionObserver' in window)) { elements.forEach((element) => element.classList.add('is-visible')); return; }
-    const observer = new IntersectionObserver((entries) => { entries.forEach((entry) => { if (!entry.isIntersecting) return; entry.target.classList.add('is-visible'); observer.unobserve(entry.target); }); }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    if (reduceMotionQuery.matches || !('IntersectionObserver' in window)) {
+      elements.forEach((element) => element.classList.add('is-visible'));
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
     elements.forEach((element) => observer.observe(element));
   }
 
   function initImageFallbacks() {
-    document.querySelectorAll('.project-card img').forEach((image) => image.addEventListener('error', () => { const media = image.closest('.project-media'); if (media) media.classList.add('image-failed'); image.hidden = true; }));
+    document.querySelectorAll('.project-card img').forEach((image) => {
+      image.addEventListener('error', () => {
+        const media = image.closest('.project-media');
+        if (media) media.classList.add('image-failed');
+        image.hidden = true;
+      });
+    });
   }
 
   function initFormFeedback() {
     const form = document.getElementById('inquiry-form');
     const status = document.getElementById('form-status');
     if (!form || !status) return;
-    form.addEventListener('invalid', (event) => { event.target.setAttribute('aria-invalid', 'true'); status.textContent = 'Check the highlighted fields and try again.'; }, true);
-    form.addEventListener('input', (event) => { if (event.target.matches('input, textarea, select') && event.target.validity.valid) event.target.removeAttribute('aria-invalid'); });
-    form.addEventListener('submit', () => { status.textContent = 'Opening the secure form submission...'; });
+    form.addEventListener('invalid', (event) => {
+      event.target.setAttribute('aria-invalid', 'true');
+      status.textContent = 'Check the highlighted fields and try again.';
+    }, true);
+    form.addEventListener('input', (event) => {
+      if (event.target.matches('input, textarea, select') && event.target.validity.valid) {
+        event.target.removeAttribute('aria-invalid');
+      }
+    });
+    form.addEventListener('submit', () => {
+      status.textContent = 'Opening the secure form submission...';
+    });
   }
 
   async function initLiquidSphere() {
     const canvas = document.getElementById('chrome-object');
-    if (!canvas) return;
+    const orb = document.getElementById('emerald-orb');
+    if (!canvas || !orb) return;
+    orb.dataset.orbMode = 'fallback';
+
     try {
       const THREE = await import('https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js');
-      const context = canvas.getContext('webgl2', { alpha: true, antialias: true, powerPreference: 'high-performance' }) || canvas.getContext('webgl', { alpha: true, antialias: true, powerPreference: 'high-performance' });
-      const renderer = new THREE.WebGLRenderer({ canvas, context, alpha: true, antialias: true, powerPreference: 'high-performance' });
+      if (!canvas.isConnected) return;
+
+      const texture = await new Promise((resolve, reject) => {
+        new THREE.TextureLoader().load('assets/emerald-orb.jpeg', resolve, undefined, reject);
+      });
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.minFilter = THREE.LinearFilter;
+      texture.magFilter = THREE.LinearFilter;
+
+      const renderer = new THREE.WebGLRenderer({
+        canvas,
+        alpha: true,
+        antialias: true,
+        powerPreference: 'high-performance'
+      });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
       renderer.outputColorSpace = THREE.SRGBColorSpace;
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.15;
+      renderer.setClearColor(0x000000, 0);
 
       const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
-      camera.position.z = 3.9;
-      const geometry = new THREE.SphereGeometry(1, 128, 128);
-      const uniforms = { time: { value: 0 }, pointer: { value: new THREE.Vector2() } };
-      const vertexShader = `
-        uniform float time;
-        varying vec3 vPosition;
-        varying vec3 vNormal;
-        float surface(vec3 p) {
-          float flow = (sin(p.x * 2.4 + time * .7) + sin(p.y * 3.1 - time * .46) + sin(p.z * 2.8 + time * .35)) / 3.0;
-          float noise = (sin(p.x * 2.8 + time * .48) + sin(p.z * 2.3 - time * .35)) * .5;
-          float pole = .55 + .45 * sin((p.y + 1.0) * 1.5708);
-          float wave = p.x * sin((p.y + noise * .32) * 6.754 - time * 1.35) + p.z * cos((p.y + noise * .32) * 6.754 - time * 1.1);
-          float fold = sin((p.x + p.z) * 5.2 + p.y * 2.4 - time * .8) * .025;
-          return flow * .1 + wave * .095 * pole + fold;
-        }
-        void main() {
-          vec3 displaced = position + normal * surface(position);
-          float offset = .003;
-          vec3 tangent = normalize(abs(normal.x) > abs(normal.z) ? vec3(-normal.y, normal.x, 0.0) : vec3(0.0, -normal.z, normal.y));
-          vec3 bitangent = normalize(cross(normal, tangent));
-          vec3 normalA = normalize(cross((position + tangent * offset) + normal * surface(position + tangent * offset) - displaced, (position + bitangent * offset) + normal * surface(position + bitangent * offset) - displaced));
-          vPosition = displaced;
-          vNormal = normalize(normalMatrix * normalA);
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(displaced, 1.0);
-        }
-      `;
-      const fragmentShader = `
-        precision highp float;
-        uniform float time;
-        uniform vec2 pointer;
-        varying vec3 vPosition;
-        varying vec3 vNormal;
-        float field(vec3 p) {
-          return (sin(p.x * 2.6 + time * .55) + sin(p.y * 3.4 - time * .32) + sin(p.z * 2.9 + time * .24) + sin((p.x + p.z) * 4.5 - time * .7)) * .25;
-        }
-        void main() {
-          vec3 viewDir = normalize(cameraPosition - vPosition);
-          vec3 lightDir = normalize(vec3(-.45, .8, 1.0));
-          vec3 normal = normalize(vNormal + vec3(field(vPosition + .08) * .16));
-          float diffuse = max(dot(normal, lightDir), 0.0);
-          float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 2.7);
-          float swirls = .5 + .5 * sin((vPosition.y + field(vPosition) * .35) * 8.0 + vPosition.x * 2.5 - time * 1.4);
-          float veins = smoothstep(.58, .9, swirls) * (.65 + .35 * field(vPosition) + fresnel);
-          vec3 deep = vec3(.003, .08, .025);
-          vec3 emerald = vec3(.01, .38, .12);
-          vec3 neon = vec3(.18, 1.0, .42);
-          vec3 color = mix(deep, emerald, smoothstep(.12, .75, field(vPosition) + .5));
-          color = mix(color, neon, veins * 1.05 + diffuse * .2);
-          color += neon * pow(max(veins, 0.0), 1.25) * .55;
-          color += neon * pow(max(fresnel, 0.0), 1.8) * .72;
-          float specular = pow(max(dot(reflect(-lightDir, normal), viewDir), 0.0), 36.0);
-          color += vec3(.72, 1.0, .82) * specular * 1.5;
-          color *= .62 + diffuse * .68;
-          gl_FragColor = vec4(color, .97);
-        }
-      `;
-      const material = new THREE.ShaderMaterial({ uniforms, vertexShader, fragmentShader, transparent: true, side: THREE.DoubleSide });
-      const mesh = new THREE.Mesh(geometry, material);
-      scene.add(mesh);
-      const glowCanvas = document.createElement('canvas');
-      glowCanvas.width = 256; glowCanvas.height = 256;
-      const glowContext = glowCanvas.getContext('2d');
-      const glowGradient = glowContext.createRadialGradient(128, 128, 5, 128, 128, 128);
-      glowGradient.addColorStop(0, 'rgba(84, 255, 150, .9)');
-      glowGradient.addColorStop(.34, 'rgba(20, 245, 96, .5)');
-      glowGradient.addColorStop(1, 'rgba(0, 100, 36, 0)');
-      glowContext.fillStyle = glowGradient; glowContext.fillRect(0, 0, 256, 256);
-      const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(glowCanvas), blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, opacity: 1.05 }));
-      glow.position.z = -.45; scene.add(glow);
+      const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
+      camera.position.z = 2;
+      const uniforms = {
+        uTexture: { value: texture },
+        uTime: { value: 0 },
+        uPointer: { value: new THREE.Vector2() },
+        uPulse: { value: 1 }
+      };
 
-      let width = 0; let height = 0; let pointerX = 0; let pointerY = 0; let easedX = 0; let easedY = 0; let frameId = 0; let lastFrame = 0; let paused = document.hidden;
-      function resize() { const rect = canvas.getBoundingClientRect(); width = Math.max(1, rect.width); height = Math.max(1, rect.height); renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix(); mesh.scale.setScalar(Math.min(width, height) * .00122); glow.scale.setScalar(Math.min(width, height) * .0031); renderer.render(scene, camera); }
-      function draw(timestamp) { easedX += (pointerX - easedX) * .045; easedY += (pointerY - easedY) * .045; uniforms.time.value = timestamp * .00045; uniforms.pointer.value.set(easedX, easedY); mesh.rotation.y = timestamp * .00012 + easedX * .18; mesh.rotation.x = easedY * .12; glow.rotation.z = timestamp * .00004; renderer.render(scene, camera); }
-      function tick(timestamp) { if (paused) return; if (timestamp - lastFrame >= 1000 / 45) { lastFrame = timestamp; draw(timestamp); } frameId = window.requestAnimationFrame(tick); }
-      function handlePointer(event) { if (reduceMotionQuery.matches) return; const rect = canvas.getBoundingClientRect(); pointerX = Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width - .5) * 2)); pointerY = Math.max(-1, Math.min(1, ((event.clientY - rect.top) / rect.height - .5) * 2)); }
-      function handleVisibility() { paused = document.hidden; if (paused) window.cancelAnimationFrame(frameId); else if (!reduceMotionQuery.matches) frameId = window.requestAnimationFrame(tick); }
-      if ('ResizeObserver' in window) new ResizeObserver(resize).observe(canvas); else { window.addEventListener('resize', resize); resize(); }
-      window.addEventListener('pointermove', handlePointer, { passive: true }); document.addEventListener('visibilitychange', handleVisibility); resize(); if (!reduceMotionQuery.matches) frameId = window.requestAnimationFrame(tick);
-    } catch (error) { console.warn('Three.js liquid sphere unavailable.', error); }
+      const material = new THREE.ShaderMaterial({
+        uniforms,
+        transparent: true,
+        depthWrite: false,
+        vertexShader: `
+          varying vec2 vUv;
+
+          void main() {
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          precision highp float;
+
+          uniform sampler2D uTexture;
+          uniform float uTime;
+          uniform float uPulse;
+          uniform vec2 uPointer;
+          varying vec2 vUv;
+
+          mat2 rotate2d(float angle) {
+            float s = sin(angle);
+            float c = cos(angle);
+            return mat2(c, -s, s, c);
+          }
+
+          void main() {
+            vec2 centered = vUv - 0.5;
+            float radius = length(centered);
+            float angle = atan(centered.y, centered.x);
+
+            float edgeRipple = sin(angle * 7.0 - uTime * 1.15) * 0.005;
+            edgeRipple += sin(angle * 4.0 + uTime * 0.82) * 0.004;
+            float silhouette = 1.0 - smoothstep(0.452 + edgeRipple, 0.477 + edgeRipple, radius);
+
+            vec2 spun = rotate2d(uTime * 0.075) * centered;
+            float liquidWave = sin(radius * 39.0 - uTime * 2.0 + sin(angle * 5.0 + uTime * 0.7) * 1.25);
+            float crossWave = cos(spun.y * 18.0 + spun.x * 7.0 + uTime * 1.05);
+            vec2 tangent = normalize(vec2(-spun.y, spun.x) + vec2(0.0001));
+            vec2 radial = normalize(spun + vec2(0.0001));
+            vec2 distortion = tangent * liquidWave * 0.008;
+            distortion += radial * crossWave * 0.005;
+            distortion += vec2(
+              sin(spun.y * 14.0 + uTime * 0.9),
+              cos(spun.x * 13.0 - uTime * 0.78)
+            ) * 0.0035;
+            distortion += uPointer * (1.0 - smoothstep(0.0, 0.47, radius)) * 0.008;
+
+            vec2 sampleUv = spun + distortion + 0.5;
+            vec4 texel = texture2D(uTexture, sampleUv);
+
+            float commonLight = min(texel.r, min(texel.g, texel.b));
+            float whiteEdge = smoothstep(0.88, 0.99, commonLight) * smoothstep(0.32, 0.46, radius);
+            float alpha = silhouette * (1.0 - whiteEdge * 0.96);
+
+            vec2 spherePoint = centered / 0.47;
+            float sphereZ = sqrt(max(0.0, 1.0 - dot(spherePoint, spherePoint)));
+            vec3 normal = normalize(vec3(spherePoint, sphereZ));
+            vec3 lightDirection = normalize(vec3(-0.4, 0.72, 0.9));
+            float diffuse = max(dot(normal, lightDirection), 0.0);
+            float fresnel = pow(1.0 - max(normal.z, 0.0), 2.4);
+            float travellingGlint = smoothstep(0.73, 0.98, 0.5 + 0.5 * sin(angle * 3.0 - uTime * 1.3 + radius * 15.0));
+
+            vec3 color = texel.rgb;
+            color *= 0.88 + diffuse * 0.25;
+            color.g *= 1.05;
+            color += vec3(0.08, 0.82, 0.28) * fresnel * 0.42 * uPulse;
+            color += vec3(0.38, 1.0, 0.58) * travellingGlint * 0.12 * (1.0 - radius);
+            gl_FragColor = vec4(color, alpha);
+          }
+        `
+      });
+
+      const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
+      mesh.scale.setScalar(0.88);
+      scene.add(mesh);
+
+      let pointerX = 0;
+      let pointerY = 0;
+      let easedX = 0;
+      let easedY = 0;
+      let frameId = 0;
+      let lastFrame = 0;
+      let paused = document.hidden;
+
+      function resize() {
+        const rect = canvas.getBoundingClientRect();
+        const width = Math.max(1, rect.width);
+        const height = Math.max(1, rect.height);
+        const aspect = width / height;
+        renderer.setSize(width, height, false);
+        camera.left = -aspect;
+        camera.right = aspect;
+        camera.top = 1;
+        camera.bottom = -1;
+        camera.updateProjectionMatrix();
+        renderer.render(scene, camera);
+      }
+
+      function draw(timestamp) {
+        easedX += (pointerX - easedX) * 0.045;
+        easedY += (pointerY - easedY) * 0.045;
+        uniforms.uTime.value = timestamp * 0.001;
+        uniforms.uPointer.value.set(easedX, easedY);
+        uniforms.uPulse.value = 0.9 + Math.sin(timestamp * 0.00135) * 0.1;
+        mesh.rotation.x = easedY * 0.035;
+        mesh.rotation.y = easedX * 0.055;
+        renderer.render(scene, camera);
+      }
+
+      function tick(timestamp) {
+        if (paused) return;
+        if (timestamp - lastFrame >= 1000 / 45) {
+          lastFrame = timestamp;
+          draw(timestamp);
+        }
+        frameId = window.requestAnimationFrame(tick);
+      }
+
+      function handlePointer(event) {
+        if (reduceMotionQuery.matches) return;
+        const rect = canvas.getBoundingClientRect();
+        pointerX = Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width - 0.5) * 2));
+        pointerY = Math.max(-1, Math.min(1, ((event.clientY - rect.top) / rect.height - 0.5) * 2));
+      }
+
+      function handleVisibility() {
+        paused = document.hidden;
+        if (paused) window.cancelAnimationFrame(frameId);
+        else if (!reduceMotionQuery.matches) frameId = window.requestAnimationFrame(tick);
+      }
+
+      if ('ResizeObserver' in window) new ResizeObserver(resize).observe(canvas);
+      else window.addEventListener('resize', resize);
+      window.addEventListener('pointermove', handlePointer, { passive: true });
+      document.addEventListener('visibilitychange', handleVisibility);
+
+      resize();
+      draw(0);
+      orb.dataset.orbMode = 'webgl';
+      if (!reduceMotionQuery.matches) frameId = window.requestAnimationFrame(tick);
+    } catch (error) {
+      console.warn('Emerald orb enhancement unavailable; using the animated image fallback.', error);
+    }
   }
 }());
