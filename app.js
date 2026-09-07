@@ -49,7 +49,8 @@
     if (!canvas) return;
     try {
       const THREE = await import('https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js');
-      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
+      const context = canvas.getContext('webgl2', { alpha: true, antialias: true, powerPreference: 'high-performance' }) || canvas.getContext('webgl', { alpha: true, antialias: true, powerPreference: 'high-performance' });
+      const renderer = new THREE.WebGLRenderer({ canvas, context, alpha: true, antialias: true, powerPreference: 'high-performance' });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -87,7 +88,7 @@
 
       let width = 0; let height = 0; let pointerX = 0; let pointerY = 0; let easedX = 0; let easedY = 0; let frameId = 0; let lastFrame = 0; let paused = document.hidden;
       function resize() { const rect = canvas.getBoundingClientRect(); width = Math.max(1, rect.width); height = Math.max(1, rect.height); renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix(); mesh.scale.setScalar(Math.min(width, height) * 0.00265); renderer.render(scene, camera); }
-      function draw(timestamp) { easedX += (pointerX - easedX) * 0.045; easedY += (pointerY - easedY) * 0.045; const time = timestamp * 0.00045; deform(time); mesh.rotation.y = timestamp * 0.00012 + easedX * 0.18; mesh.rotation.x = easedY * 0.12; renderer.render(scene, camera); }
+      function draw(timestamp) { easedX += (pointerX - easedX) * 0.045; easedY += (pointerY - easedY) * 0.045; deform(timestamp * 0.00045); mesh.rotation.y = timestamp * 0.00012 + easedX * 0.18; mesh.rotation.x = easedY * 0.12; renderer.render(scene, camera); }
       function tick(timestamp) { if (paused) return; if (timestamp - lastFrame >= 1000 / 45) { lastFrame = timestamp; draw(timestamp); } frameId = window.requestAnimationFrame(tick); }
       function handlePointer(event) { if (reduceMotionQuery.matches) return; const rect = canvas.getBoundingClientRect(); pointerX = Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width - 0.5) * 2)); pointerY = Math.max(-1, Math.min(1, ((event.clientY - rect.top) / rect.height - 0.5) * 2)); }
       function handleVisibility() { paused = document.hidden; if (paused) window.cancelAnimationFrame(frameId); else if (!reduceMotionQuery.matches) frameId = window.requestAnimationFrame(tick); }
