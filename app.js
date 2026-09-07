@@ -105,12 +105,13 @@
           vec3 emerald = vec3(.01, .38, .12);
           vec3 neon = vec3(.18, 1.0, .42);
           vec3 color = mix(deep, emerald, smoothstep(.12, .75, field(vPosition) + .5));
-          color = mix(color, neon, veins * .8 + diffuse * .18);
-          color += neon * pow(max(fresnel, 0.0), 1.8) * .55;
-          float specular = pow(max(dot(reflect(-lightDir, normal), viewDir), 0.0), 42.0);
-          color += vec3(.65, 1.0, .76) * specular * 1.25;
-          color *= .62 + diffuse * .62;
-          gl_FragColor = vec4(color, .96);
+          color = mix(color, neon, veins * 1.05 + diffuse * .2);
+          color += neon * pow(max(veins, 0.0), 1.25) * .55;
+          color += neon * pow(max(fresnel, 0.0), 1.8) * .72;
+          float specular = pow(max(dot(reflect(-lightDir, normal), viewDir), 0.0), 36.0);
+          color += vec3(.72, 1.0, .82) * specular * 1.5;
+          color *= .62 + diffuse * .68;
+          gl_FragColor = vec4(color, .97);
         }
       `;
       const material = new THREE.ShaderMaterial({ uniforms, vertexShader, fragmentShader, transparent: true, side: THREE.DoubleSide });
@@ -119,16 +120,16 @@
       const glowCanvas = document.createElement('canvas');
       glowCanvas.width = 256; glowCanvas.height = 256;
       const glowContext = glowCanvas.getContext('2d');
-      const glowGradient = glowContext.createRadialGradient(128, 128, 8, 128, 128, 128);
-      glowGradient.addColorStop(0, 'rgba(64, 255, 140, .78)');
-      glowGradient.addColorStop(.34, 'rgba(20, 238, 96, .4)');
+      const glowGradient = glowContext.createRadialGradient(128, 128, 5, 128, 128, 128);
+      glowGradient.addColorStop(0, 'rgba(84, 255, 150, .9)');
+      glowGradient.addColorStop(.34, 'rgba(20, 245, 96, .5)');
       glowGradient.addColorStop(1, 'rgba(0, 100, 36, 0)');
       glowContext.fillStyle = glowGradient; glowContext.fillRect(0, 0, 256, 256);
-      const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(glowCanvas), blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, opacity: .9 }));
+      const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(glowCanvas), blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, opacity: 1.05 }));
       glow.position.z = -.45; scene.add(glow);
 
       let width = 0; let height = 0; let pointerX = 0; let pointerY = 0; let easedX = 0; let easedY = 0; let frameId = 0; let lastFrame = 0; let paused = document.hidden;
-      function resize() { const rect = canvas.getBoundingClientRect(); width = Math.max(1, rect.width); height = Math.max(1, rect.height); renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix(); mesh.scale.setScalar(Math.min(width, height) * .00122); glow.scale.setScalar(Math.min(width, height) * .0029); renderer.render(scene, camera); }
+      function resize() { const rect = canvas.getBoundingClientRect(); width = Math.max(1, rect.width); height = Math.max(1, rect.height); renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix(); mesh.scale.setScalar(Math.min(width, height) * .00122); glow.scale.setScalar(Math.min(width, height) * .0031); renderer.render(scene, camera); }
       function draw(timestamp) { easedX += (pointerX - easedX) * .045; easedY += (pointerY - easedY) * .045; uniforms.time.value = timestamp * .00045; uniforms.pointer.value.set(easedX, easedY); mesh.rotation.y = timestamp * .00012 + easedX * .18; mesh.rotation.x = easedY * .12; glow.rotation.z = timestamp * .00004; renderer.render(scene, camera); }
       function tick(timestamp) { if (paused) return; if (timestamp - lastFrame >= 1000 / 45) { lastFrame = timestamp; draw(timestamp); } frameId = window.requestAnimationFrame(tick); }
       function handlePointer(event) { if (reduceMotionQuery.matches) return; const rect = canvas.getBoundingClientRect(); pointerX = Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width - .5) * 2)); pointerY = Math.max(-1, Math.min(1, ((event.clientY - rect.top) / rect.height - .5) * 2)); }
