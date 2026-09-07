@@ -89,7 +89,7 @@
     });
 
     form.addEventListener('submit', () => {
-      status.textContent = 'Opening the secure form submission…';
+      status.textContent = 'Opening the secure form submission...';
     });
   }
 
@@ -100,10 +100,6 @@
     const context = canvas.getContext('2d');
     if (!context) return;
 
-    const longitudinalSegments = 96;
-    const radialSegments = 12;
-    const baseVertices = [];
-    const faces = [];
     let width = 0;
     let height = 0;
     let pixelRatio = 1;
@@ -116,34 +112,13 @@
     let phase = 0;
     let paused = document.hidden;
 
-    for (let i = 0; i < longitudinalSegments; i += 1) {
-      for (let j = 0; j < radialSegments; j += 1) {
-        const major = 1.15;
-        const minor = 0.38;
-        const u = (i / longitudinalSegments) * Math.PI * 2;
-        const v = (j / radialSegments) * Math.PI * 2;
-        const warp = 0.1 * Math.sin(3 * u);
-        const ring = major + (minor + warp) * Math.cos(v);
-        baseVertices.push({
-          x: ring * Math.cos(u),
-          y: ring * Math.sin(u),
-          z: (minor + warp) * Math.sin(v) + 0.12 * Math.sin(2 * u)
-        });
-      }
-    }
-
-    for (let i = 0; i < longitudinalSegments; i += 1) {
-      for (let j = 0; j < radialSegments; j += 1) {
-        const nextI = (i + 1) % longitudinalSegments;
-        const nextJ = (j + 1) % radialSegments;
-        faces.push([
-          i * radialSegments + j,
-          nextI * radialSegments + j,
-          nextI * radialSegments + nextJ,
-          i * radialSegments + nextJ
-        ]);
-      }
-    }
+    const blobs = Array.from({ length: 24 }, (_, index) => ({
+      angle: index * 2.39996,
+      distance: 0.1 + ((index * 37) % 71) / 100,
+      size: 0.12 + ((index * 19) % 21) / 100,
+      hue: index % 3,
+      drift: 0.35 + ((index * 11) % 17) / 20
+    }));
 
     function resize() {
       const rect = canvas.getBoundingClientRect();
@@ -156,47 +131,43 @@
       draw();
     }
 
-    function rotate(vertex, angleX, angleY, angleZ) {
-      const cosX = Math.cos(angleX);
-      const sinX = Math.sin(angleX);
-      const cosY = Math.cos(angleY);
-      const sinY = Math.sin(angleY);
-      const cosZ = Math.cos(angleZ);
-      const sinZ = Math.sin(angleZ);
-
-      const x1 = vertex.x * cosY + vertex.z * sinY;
-      const z1 = -vertex.x * sinY + vertex.z * cosY;
-      const y2 = vertex.y * cosX - z1 * sinX;
-      const z2 = vertex.y * sinX + z1 * cosX;
-
-      return {
-        x: x1 * cosZ - y2 * sinZ,
-        y: x1 * sinZ + y2 * cosZ,
-        z: z2
-      };
+    function spherePath(centerX, centerY, radius, time) {
+      const points = 96;
+      context.beginPath();
+      for (let index = 0; index <= points; index += 1) {
+        const angle = (index / points) * Math.PI * 2;
+        const wobble = 1 + 0.035 * Math.sin(angle * 3 + time * 1.4) + 0.022 * Math.sin(angle * 7 - time * 0.9);
+        const x = centerX + Math.cos(angle) * radius * wobble;
+        const y = centerY + Math.sin(angle) * radius * wobble;
+        if (index === 0) context.moveTo(x, y);
+        else context.lineTo(x, y);
+      }
+      context.closePath();
     }
 
-    function normal(a, b, c) {
-      const ab = { x: b.x - a.x, y: b.y - a.y, z: b.z - a.z };
-      const ac = { x: c.x - a.x, y: c.y - a.y, z: c.z - a.z };
-      const cross = {
-        x: ab.y * ac.z - ab.z * ac.y,
-        y: ab.z * ac.x - ab.x * ac.z,
-        z: ab.x * ac.y - ab.y * ac.x
-      };
-      const length = Math.hypot(cross.x, cross.y, cross.z) || 1;
-      return { x: cross.x / length, y: cross.y / length, z: cross.z / length };
-    }
+    function paintBlob(centerX, centerY, radius, blob, time) {
+      const drift = time * blob.drift;
+      const angle = blob.angle + drift * 0.18;
+      const distance = radius * (blob.distance * 0.76 + Math.sin(drift + blob.angle) * 0.07);
+      const x = centerX + Math.cos(angle) * distance;
+      const y = centerY + Math.sin(angle) * distance * 0.82;
+      const size = radius * (blob.size + Math.sin(drift * 1.3) * 0.025);
+      const color = blob.hue === 0 ? 'rgba(18, 220, 255, 0.62)' : blob.hue === 1 ? 'rgba(244, 50, 210, 0.56)' : 'rgba(101, 75, 255, 0.58)';
 
-    function shade(faceNormal) {
-      const white = Math.abs(faceNormal.x * -0.42 + faceNormal.y * -0.68 + faceNormal.z * 0.6);
-      const dark = Math.max(0, faceNormal.x * 0.62 + faceNormal.y * 0.25 - faceNormal.z * 0.74);
-      const acid = Math.pow(Math.max(0, faceNormal.x * -0.48 + faceNormal.y * -0.8 + faceNormal.z * 0.36), 7);
-      const gray = Math.max(18, Math.min(232, 45 + white * 205 - dark * 72));
-      const red = Math.round(gray + (198 - gray) * acid);
-      const green = Math.round(gray + (255 - gray) * acid);
-      const blue = Math.round(gray + (85 - gray) * acid);
-      return `rgb(${red} ${green} ${blue})`;
+      context.save();
+      context.translate(x, y);
+      context.rotate(angle + Math.sin(drift) * 0.5);
+      context.scale(1, 0.62 + Math.sin(blob.angle) * 0.14);
+      context.filter = 'blur(12px)';
+      const gradient = context.createRadialGradient(-size * 0.3, -size * 0.35, 0, 0, 0, size);
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 0.76)');
+      gradient.addColorStop(0.2, color);
+      gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      context.fillStyle = gradient;
+      context.beginPath();
+      context.ellipse(0, 0, size, size * 0.72, 0, 0, Math.PI * 2);
+      context.fill();
+      context.restore();
     }
 
     function draw() {
@@ -206,48 +177,68 @@
       easedX += (pointerX - easedX) * 0.045;
       easedY += (pointerY - easedY) * 0.045;
 
-      const angleX = -0.72 + easedY * 0.16;
-      const angleY = 0.68 + easedX * 0.16;
-      const angleZ = -0.3 + phase;
-      const focalLength = 4.6;
-      const objectScale = Math.min(width, height) * 0.29;
+      const centerX = width * (0.54 + easedX * 0.025);
+      const centerY = height * (0.48 + easedY * 0.025);
+      const radius = Math.min(width, height) * 0.365;
+      const lightX = centerX - radius * (0.35 + easedX * 0.12);
+      const lightY = centerY - radius * (0.38 + easedY * 0.08);
 
-      const vertices = baseVertices.map((vertex) => {
-        const rotated = rotate(vertex, angleX, angleY, angleZ);
-        const perspective = focalLength / (focalLength + rotated.z);
-        return {
-          ...rotated,
-          px: width * 0.54 + rotated.x * objectScale * perspective,
-          py: height * 0.48 + rotated.y * objectScale * perspective
-        };
-      });
+      context.save();
+      spherePath(centerX, centerY, radius, phase);
+      context.clip();
 
-      const sortedFaces = faces.map((indices) => {
-        const points = indices.map((index) => vertices[index]);
-        return {
-          points,
-          depth: points.reduce((sum, point) => sum + point.z, 0) / points.length,
-          fill: shade(normal(points[0], points[1], points[2]))
-        };
-      }).sort((a, b) => b.depth - a.depth);
+      const base = context.createRadialGradient(lightX, lightY, radius * 0.04, centerX, centerY, radius * 1.15);
+      base.addColorStop(0, '#f6ffff');
+      base.addColorStop(0.16, '#91edff');
+      base.addColorStop(0.42, '#5276de');
+      base.addColorStop(0.7, '#8327ad');
+      base.addColorStop(0.9, '#1b2369');
+      base.addColorStop(1, '#070b2b');
+      context.fillStyle = base;
+      context.fillRect(centerX - radius, centerY - radius, radius * 2, radius * 2);
 
-      sortedFaces.forEach((face) => {
-        context.beginPath();
-        context.moveTo(face.points[0].px, face.points[0].py);
-        for (let i = 1; i < face.points.length; i += 1) {
-          context.lineTo(face.points[i].px, face.points[i].py);
-        }
-        context.closePath();
-        context.fillStyle = face.fill;
-        context.fill();
-      });
+      context.globalCompositeOperation = 'screen';
+      blobs.forEach((blob) => paintBlob(centerX, centerY, radius, blob, phase));
+
+      const sheen = context.createRadialGradient(lightX, lightY, 0, lightX, lightY, radius * 0.82);
+      sheen.addColorStop(0, 'rgba(255, 255, 255, 0.7)');
+      sheen.addColorStop(0.13, 'rgba(224, 255, 255, 0.2)');
+      sheen.addColorStop(0.55, 'rgba(255, 255, 255, 0.02)');
+      sheen.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      context.fillStyle = sheen;
+      context.fillRect(centerX - radius, centerY - radius, radius * 2, radius * 2);
+      context.restore();
+
+      context.save();
+      spherePath(centerX, centerY, radius, phase);
+      context.strokeStyle = 'rgba(210, 255, 255, 0.58)';
+      context.lineWidth = Math.max(1, radius * 0.012);
+      context.shadowColor = 'rgba(99, 243, 255, 0.65)';
+      context.shadowBlur = radius * 0.12;
+      context.stroke();
+      context.restore();
+
+      context.save();
+      context.translate(lightX, lightY);
+      context.rotate(-0.35 + easedX * 0.15);
+      context.scale(1, 0.42);
+      context.filter = 'blur(15px)';
+      const highlight = context.createRadialGradient(0, 0, 0, 0, 0, radius * 0.32);
+      highlight.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
+      highlight.addColorStop(0.24, 'rgba(219, 255, 255, 0.38)');
+      highlight.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      context.fillStyle = highlight;
+      context.beginPath();
+      context.ellipse(0, 0, radius * 0.32, radius * 0.18, 0, 0, Math.PI * 2);
+      context.fill();
+      context.restore();
     }
 
     function tick(timestamp) {
       if (paused) return;
       if (timestamp - lastFrame >= 1000 / 30) {
         lastFrame = timestamp;
-        phase += 0.0025;
+        phase += 0.012;
         draw();
       }
       frameId = window.requestAnimationFrame(tick);
