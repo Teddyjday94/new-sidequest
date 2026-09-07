@@ -62,9 +62,13 @@
       const geometry = new THREE.SphereGeometry(1, 128, 128);
       const positionAttribute = geometry.attributes.position;
       const basePositions = new Float32Array(positionAttribute.array);
-      const material = new THREE.MeshPhysicalMaterial({ color: 0x0a8f46, metalness: 0.42, roughness: 0.18, clearcoat: 1, clearcoatRoughness: 0.08, iridescence: 0.45, iridescenceIOR: 1.35, emissive: 0x062c17, emissiveIntensity: 0.55, transparent: true, opacity: 0.96 });
+      const material = new THREE.MeshPhysicalMaterial({ color: 0x064f27, metalness: 0.28, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.06, iridescence: 0.55, iridescenceIOR: 1.35, emissive: 0x00ff5a, emissiveIntensity: 0.82, transparent: true, opacity: 0.93 });
       const mesh = new THREE.Mesh(geometry, material);
       scene.add(mesh);
+      const innerMaterial = new THREE.MeshBasicMaterial({ color: 0x0cff62, transparent: true, opacity: 0.12, blending: THREE.AdditiveBlending, depthWrite: false });
+      const innerMesh = new THREE.Mesh(geometry.clone(), innerMaterial);
+      innerMesh.scale.setScalar(0.985);
+      scene.add(innerMesh);
       scene.add(new THREE.HemisphereLight(0xcaffdf, 0x031b0b, 2.2));
       const key = new THREE.DirectionalLight(0xe4fff0, 6); key.position.set(-2, 3, 4); scene.add(key);
       const emerald = new THREE.PointLight(0x21ff87, 10, 8); emerald.position.set(2, -1, 2); scene.add(emerald);
@@ -73,13 +77,13 @@
       glowCanvas.width = 256;
       glowCanvas.height = 256;
       const glowContext = glowCanvas.getContext('2d');
-      const glowGradient = glowContext.createRadialGradient(128, 128, 12, 128, 128, 128);
-      glowGradient.addColorStop(0, 'rgba(56, 255, 130, 0.62)');
-      glowGradient.addColorStop(0.34, 'rgba(20, 214, 91, 0.28)');
-      glowGradient.addColorStop(1, 'rgba(0, 80, 30, 0)');
+      const glowGradient = glowContext.createRadialGradient(128, 128, 8, 128, 128, 128);
+      glowGradient.addColorStop(0, 'rgba(64, 255, 140, 0.78)');
+      glowGradient.addColorStop(0.34, 'rgba(20, 238, 96, 0.4)');
+      glowGradient.addColorStop(1, 'rgba(0, 100, 36, 0)');
       glowContext.fillStyle = glowGradient;
       glowContext.fillRect(0, 0, 256, 256);
-      const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(glowCanvas), blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, opacity: 0.72 }));
+      const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(glowCanvas), blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, opacity: 0.9 }));
       glow.position.z = -0.45;
       scene.add(glow);
 
@@ -103,8 +107,8 @@
       }
 
       let width = 0; let height = 0; let pointerX = 0; let pointerY = 0; let easedX = 0; let easedY = 0; let frameId = 0; let lastFrame = 0; let paused = document.hidden;
-      function resize() { const rect = canvas.getBoundingClientRect(); width = Math.max(1, rect.width); height = Math.max(1, rect.height); renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix(); mesh.scale.setScalar(Math.min(width, height) * 0.00122); glow.scale.setScalar(Math.min(width, height) * 0.0027); renderer.render(scene, camera); }
-      function draw(timestamp) { easedX += (pointerX - easedX) * 0.045; easedY += (pointerY - easedY) * 0.045; deform(timestamp * 0.00045); mesh.rotation.y = timestamp * 0.00012 + easedX * 0.18; mesh.rotation.x = easedY * 0.12; renderer.render(scene, camera); }
+      function resize() { const rect = canvas.getBoundingClientRect(); width = Math.max(1, rect.width); height = Math.max(1, rect.height); renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix(); mesh.scale.setScalar(Math.min(width, height) * 0.00122); innerMesh.scale.setScalar(Math.min(width, height) * 0.0012); glow.scale.setScalar(Math.min(width, height) * 0.0029); renderer.render(scene, camera); }
+      function draw(timestamp) { easedX += (pointerX - easedX) * 0.045; easedY += (pointerY - easedY) * 0.045; deform(timestamp * 0.00045); mesh.rotation.y = timestamp * 0.00012 + easedX * 0.18; mesh.rotation.x = easedY * 0.12; innerMesh.rotation.copy(mesh.rotation); renderer.render(scene, camera); }
       function tick(timestamp) { if (paused) return; if (timestamp - lastFrame >= 1000 / 45) { lastFrame = timestamp; draw(timestamp); } frameId = window.requestAnimationFrame(tick); }
       function handlePointer(event) { if (reduceMotionQuery.matches) return; const rect = canvas.getBoundingClientRect(); pointerX = Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width - 0.5) * 2)); pointerY = Math.max(-1, Math.min(1, ((event.clientY - rect.top) / rect.height - 0.5) * 2)); }
       function handleVisibility() { paused = document.hidden; if (paused) window.cancelAnimationFrame(frameId); else if (!reduceMotionQuery.matches) frameId = window.requestAnimationFrame(tick); }
