@@ -147,7 +147,8 @@
       float scene(vec3 p) {
         float flow = fbm(p * 2.1 + vec3(time * 0.12, -time * 0.09, time * 0.08));
         float detail = noise(p * 2.2 - vec3(time * 0.08));
-        return length(p) - (0.78 + (flow - 0.5) * 0.1 + (detail - 0.5) * 0.012);
+        float ripple = sin(p.y * 9.0 + p.z * 3.4 + sin(p.x * 4.5 + time * 0.5) * 1.2 - time * 1.25 + flow * 2.0);
+        return length(p) - (0.78 + (flow - 0.5) * 0.1 + (detail - 0.5) * 0.012 + ripple * 0.012);
       }
 
       vec3 getNormal(vec3 p) {
@@ -187,18 +188,18 @@
         float bands = sin((position.x * 2.8 + position.y * 2.4 + position.z * 3.2) + liquid * 4.0 + time * 0.65);
         bands = smoothstep(-0.38, 0.55, bands);
 
-        vec3 cyan = vec3(0.08, 0.92, 0.48);
-        vec3 blue = vec3(0.02, 0.25, 0.16);
-        vec3 violet = vec3(0.12, 0.68, 0.28);
-        vec3 pink = vec3(0.72, 1.0, 0.08);
+        vec3 cyan = vec3(0.03, 0.52, 0.2);
+        vec3 blue = vec3(0.008, 0.1, 0.045);
+        vec3 violet = vec3(0.03, 0.34, 0.12);
+        vec3 pink = vec3(0.38, 0.72, 0.05);
         vec3 color = mix(blue, violet, smoothstep(0.18, 0.78, liquid));
         color = mix(color, cyan, bands * 0.52 + diffuse * 0.32);
         color = mix(color, pink, smoothstep(0.62, 0.96, liquid) * (1.0 - diffuse) * 0.72);
 
         float specular = pow(max(dot(reflect(-lightDirection, normal), -rayDirection), 0.0), 34.0);
-        color += vec3(0.78, 1.0, 0.86) * specular * 1.15;
-        color += vec3(0.18, 1.0, 0.48) * fresnel * 0.42;
-        color *= 0.74 + diffuse * 0.52;
+        color += vec3(0.52, 0.86, 0.62) * specular * 1.15;
+        color += vec3(0.08, 0.62, 0.24) * fresnel * 0.42;
+        color *= 0.58 + diffuse * 0.48;
 
         float edge = smoothstep(0.04, 0.5, fresnel);
         gl_FragColor = vec4(color, 0.92 + edge * 0.08);
