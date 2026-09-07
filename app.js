@@ -136,7 +136,7 @@
       float fbm(vec3 p) {
         float value = 0.0;
         float amplitude = 0.5;
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 4; i++) {
           value += amplitude * noise(p);
           p = p * 2.03 + vec3(3.1, 1.7, 2.4);
           amplitude *= 0.5;
@@ -146,8 +146,8 @@
 
       float scene(vec3 p) {
         float flow = fbm(p * 2.1 + vec3(time * 0.12, -time * 0.09, time * 0.08));
-        float detail = noise(p * 7.0 - vec3(time * 0.18));
-        return length(p) - (0.78 + (flow - 0.5) * 0.12 + (detail - 0.5) * 0.025);
+        float detail = noise(p * 2.2 - vec3(time * 0.08));
+        return length(p) - (0.78 + (flow - 0.5) * 0.1 + (detail - 0.5) * 0.012);
       }
 
       vec3 getNormal(vec3 p) {
@@ -184,7 +184,7 @@
         float diffuse = max(dot(normal, lightDirection), 0.0);
         float fresnel = pow(1.0 - max(dot(normal, -rayDirection), 0.0), 2.8);
         float liquid = fbm(position * 3.4 + vec3(time * 0.16, time * 0.08, -time * 0.11));
-        float bands = sin((position.x * 5.2 + position.y * 4.3 + position.z * 7.0) + liquid * 8.0 + time * 0.65);
+        float bands = sin((position.x * 2.8 + position.y * 2.4 + position.z * 3.2) + liquid * 4.0 + time * 0.65);
         bands = smoothstep(-0.38, 0.55, bands);
 
         vec3 cyan = vec3(0.03, 0.82, 1.0);
