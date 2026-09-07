@@ -110,8 +110,6 @@
       uniform float time;
       uniform vec2 pointer;
 
-      #define PI 3.14159265359
-
       float hash21(vec2 p) {
         p = fract(p * vec2(123.34, 456.21));
         p += dot(p, p + 45.32);
@@ -119,17 +117,21 @@
       }
 
       float noise(vec3 p) {
-        vec3 i = floor(p);
-        vec3 f = fract(p);
-        f = f * f * (3.0 - 2.0 * f);
-        float n = i.x + i.y * 57.0 + i.z * 113.0;
-        float a = hash21(vec2(n, n + 1.0));
-        float b = hash21(vec2(n + 57.0, n + 58.0));
-        float c = hash21(vec2(n + 113.0, n + 114.0));
-        float d = hash21(vec2(n + 170.0, n + 171.0));
-        float e = mix(a, b, f.x);
-        float g = mix(c, d, f.x);
-        return mix(e, g, f.y + f.z * 0.18);
+        vec3 cell = floor(p);
+        vec3 blend = fract(p);
+        blend = blend * blend * (3.0 - 2.0 * blend);
+        float layer = cell.z * 37.0;
+        float a = hash21(cell.xy + vec2(layer, layer + 1.0));
+        float b = hash21(cell.xy + vec2(1.0 + layer, layer + 2.0));
+        float c = hash21(cell.xy + vec2(57.0 + layer, 58.0 + layer));
+        float d = hash21(cell.xy + vec2(58.0 + layer, 59.0 + layer));
+        float e = hash21(cell.xy + vec2(layer + 113.0, layer + 114.0));
+        float f = hash21(cell.xy + vec2(layer + 114.0, layer + 115.0));
+        float g = hash21(cell.xy + vec2(layer + 170.0, layer + 171.0));
+        float h = hash21(cell.xy + vec2(layer + 171.0, layer + 172.0));
+        float lower = mix(mix(a, b, blend.x), mix(c, d, blend.x), blend.y);
+        float upper = mix(mix(e, f, blend.x), mix(g, h, blend.x), blend.y);
+        return mix(lower, upper, blend.z);
       }
 
       float fbm(vec3 p) {
