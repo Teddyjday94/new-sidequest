@@ -76,9 +76,12 @@
           const x = basePositions[offset];
           const y = basePositions[offset + 1];
           const z = basePositions[offset + 2];
-          const flow = (Math.sin(x * 3.1 + time * 0.7) + Math.sin(y * 4.0 - time * 0.46) + Math.sin(z * 3.6 + time * 0.35)) / 3;
-          const ripple = Math.sin((y + flow * 0.2) * Math.PI * 1.35 - time * 1.8 + x * 0.75 + z * 0.35);
-          const amount = flow * 0.055 + ripple * 0.018;
+          const poleWeight = 0.55 + 0.45 * Math.sin((y + 1) * Math.PI * 0.5);
+          const flow = (Math.sin(x * 2.4 + time * 0.7) + Math.sin(y * 3.1 - time * 0.46) + Math.sin(z * 2.8 + time * 0.35)) / 3;
+          const surfaceNoise = (Math.sin(x * 2.8 + time * 0.48) + Math.sin(z * 2.3 - time * 0.35)) * 0.5;
+          const wave = (x * Math.sin((y + surfaceNoise * 0.32) * Math.PI * 2.15 - time * 1.35) + z * Math.cos((y + surfaceNoise * 0.32) * Math.PI * 2.15 - time * 1.1));
+          const fold = Math.sin((x + z) * 5.2 + y * 2.4 - time * 0.8) * 0.025;
+          const amount = flow * 0.1 + wave * 0.095 * poleWeight + fold;
           const length = Math.hypot(x, y, z) || 1;
           positionAttribute.setXYZ(index, x + (x / length) * amount, y + (y / length) * amount, z + (z / length) * amount);
         }
