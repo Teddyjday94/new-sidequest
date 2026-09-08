@@ -149,8 +149,8 @@
             float radius = length(centered);
             float angle = atan(centered.y, centered.x);
 
-            float edgeRipple = sin(angle * 7.0 - uTime * 1.15) * 0.005;
-            edgeRipple += sin(angle * 4.0 + uTime * 0.82) * 0.004;
+            float edgeRipple = sin(angle * 7.0 - uTime * 1.15) * 0.0065;
+            edgeRipple += sin(angle * 4.0 + uTime * 0.82) * 0.0052;
             float silhouette = 1.0 - smoothstep(0.452 + edgeRipple, 0.477 + edgeRipple, radius);
 
             vec2 spun = rotate2d(uTime * 0.075) * centered;
@@ -158,13 +158,13 @@
             float crossWave = cos(spun.y * 18.0 + spun.x * 7.0 + uTime * 1.05);
             vec2 tangent = normalize(vec2(-spun.y, spun.x) + vec2(0.0001));
             vec2 radial = normalize(spun + vec2(0.0001));
-            vec2 distortion = tangent * liquidWave * 0.008;
-            distortion += radial * crossWave * 0.005;
+            vec2 distortion = tangent * liquidWave * 0.0104;
+            distortion += radial * crossWave * 0.0065;
             distortion += vec2(
               sin(spun.y * 14.0 + uTime * 0.9),
               cos(spun.x * 13.0 - uTime * 0.78)
-            ) * 0.0035;
-            distortion += uPointer * (1.0 - smoothstep(0.0, 0.47, radius)) * 0.008;
+            ) * 0.00455;
+            distortion += uPointer * (1.0 - smoothstep(0.0, 0.47, radius)) * 0.0104;
 
             vec2 sampleUv = spun + distortion + 0.5;
             vec4 texel = texture2D(uTexture, sampleUv);
@@ -184,8 +184,8 @@
             vec3 color = texel.rgb;
             color *= 0.88 + diffuse * 0.25;
             color.g *= 1.05;
-            color += vec3(0.08, 0.82, 0.28) * fresnel * 0.42 * uPulse;
-            color += vec3(0.38, 1.0, 0.58) * travellingGlint * 0.12 * (1.0 - radius);
+            color += vec3(0.08, 0.82, 0.28) * fresnel * 0.546 * uPulse;
+            color += vec3(0.38, 1.0, 0.58) * travellingGlint * 0.156 * (1.0 - radius);
             gl_FragColor = vec4(color, alpha);
           }
         `
@@ -222,9 +222,9 @@
         easedY += (pointerY - easedY) * 0.045;
         uniforms.uTime.value = timestamp * 0.001;
         uniforms.uPointer.value.set(easedX, easedY);
-        uniforms.uPulse.value = 0.9 + Math.sin(timestamp * 0.00135) * 0.1;
-        mesh.rotation.x = easedY * 0.035;
-        mesh.rotation.y = easedX * 0.055;
+        uniforms.uPulse.value = 0.9 + Math.sin(timestamp * 0.00135) * 0.13;
+        mesh.rotation.x = easedY * 0.0455;
+        mesh.rotation.y = easedX * 0.0715;
         renderer.render(scene, camera);
       }
 
