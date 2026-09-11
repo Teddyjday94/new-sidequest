@@ -27,12 +27,21 @@ test('features Boba Lover and retires the four approved project cards', () => {
     assert.ok(!html.includes(link), `Still includes retired project: ${link}`);
   }
 
-  assert.equal((html.match(/<article class="project-card/g) ?? []).length, 9);
+  assert.equal((html.match(/<article class="project-card/g) ?? []).length, 10);
 });
 
 test('ships a real Boba Lover image for the portfolio card', async () => {
   const image = await readFile(new URL('../assets/projects/boba-lover.jpg', import.meta.url));
   assert.ok(image.length > 100_000, 'Boba Lover image should not be an empty placeholder');
+  assert.deepEqual([...image.subarray(0, 3)], [0xff, 0xd8, 0xff]);
+});
+
+test('features Santa Jim Hope with real project photography', async () => {
+  assert.match(html, /href="https:\/\/github\.com\/Teddyjday94\/santa-jim-hope-site"/);
+  assert.match(html, /<h3>Santa Jim Hope<\/h3>/);
+
+  const image = await readFile(new URL('../assets/projects/santa-jim-hope.jpg', import.meta.url));
+  assert.ok(image.length > 100_000, 'Santa Jim Hope image should not be an empty placeholder');
   assert.deepEqual([...image.subarray(0, 3)], [0xff, 0xd8, 0xff]);
 });
 
