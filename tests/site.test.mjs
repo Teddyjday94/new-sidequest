@@ -6,18 +6,18 @@ const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 const css = await readFile(new URL('../styles.css', import.meta.url), 'utf8');
 
 test('presents Sidequest Creative as a client and side-project portfolio', () => {
-  assert.match(html, /<title>Sidequest Creative \\|/i);
-  assert.match(html, /<h2>Client work<\\/h2>/i);
-  assert.match(html, /<h2>Side projects<\\/h2>/i);
-  assert.match(html, /data-project-type="client"/);
-  assert.match(html, /data-project-type="side"/);
+  assert.ok(html.includes('<title>Sidequest Creative |'));
+  assert.ok(html.includes('<h2>Client work</h2>'));
+  assert.ok(html.includes('<h2>Side projects</h2>'));
+  assert.ok(html.includes('data-project-type="client"'));
+  assert.ok(html.includes('data-project-type="side"'));
 });
 
 test('features Chocolate Oracle and HandFX while retiring replaced portfolio cards', () => {
-  assert.match(html, /href="https:\\/\\/chocolateoracle\\.vercel\\.app\\/"/);
-  assert.match(html, /<h3>Chocolate Oracle<\\/h3>/);
-  assert.match(html, /href="https:\\/\\/handfx-three\\.vercel\\.app\\/"/);
-  assert.match(html, /<h3>HandFX<\\/h3>/);
+  assert.ok(html.includes('href="https://chocolateoracle.vercel.app/"'));
+  assert.ok(html.includes('<h3>Chocolate Oracle</h3>'));
+  assert.ok(html.includes('href="https://handfx-three.vercel.app/"'));
+  assert.ok(html.includes('<h3>HandFX</h3>'));
 
   const retiredContent = [
     'legacy-tattoo-studio.vercel.app',
@@ -31,8 +31,8 @@ test('features Chocolate Oracle and HandFX while retiring replaced portfolio car
     '<h3>Boba Lover</h3>',
     '<h3>Cinderella’s Pet Palace</h3>'
   ];
-  for (const content of retiredContent) {
-    assert.ok(!html.includes(content), `Still includes retired project content: ${content}`);
+  for (const item of retiredContent) {
+    assert.ok(!html.includes(item), `Still includes retired project content: ${item}`);
   }
 
   assert.equal((html.match(/<article class="project-card/g) ?? []).length, 9);
@@ -49,8 +49,8 @@ test('ships optimized portfolio images for Chocolate Oracle and HandFX', async (
 });
 
 test('features Santa Jim Hope with real project photography', async () => {
-  assert.match(html, /href="https:\\/\\/github\\.com\\/Teddyjday94\\/santa-jim-hope-site"/);
-  assert.match(html, /<h3>Santa Jim Hope<\\/h3>/);
+  assert.ok(html.includes('href="https://github.com/Teddyjday94/santa-jim-hope-site"'));
+  assert.ok(html.includes('<h3>Santa Jim Hope</h3>'));
 
   const image = await readFile(new URL('../assets/projects/santa-jim-hope.jpg', import.meta.url));
   assert.ok(image.length > 100_000, 'Santa Jim Hope image should not be an empty placeholder');
@@ -58,7 +58,7 @@ test('features Santa Jim Hope with real project photography', async () => {
 });
 
 test('keeps navigation and reduced-motion accessibility safeguards', () => {
-  assert.match(html, /aria-label="Primary"/);
-  assert.match(html, /class="skip-link"/);
-  assert.match(css, /prefers-reduced-motion/);
+  assert.ok(html.includes('aria-label="Primary"'));
+  assert.ok(html.includes('class="skip-link"'));
+  assert.ok(css.includes('prefers-reduced-motion'));
 });
