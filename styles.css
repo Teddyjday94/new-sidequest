@@ -227,7 +227,7 @@ img { display: block; width: 100%; max-width: 100%; }
 .quest-panel {
   position: relative;
   overflow: hidden;
-  min-height: 545px;
+  min-height: 565px;
   padding: 20px;
   border: 1px solid var(--line-strong);
   border-radius: 28px;
@@ -506,746 +506,88 @@ img { display: block; width: 100%; max-width: 100%; }
   mask-image: radial-gradient(circle, #000 56%, rgba(0,0,0,.94) 72%, transparent 96%);
 }
 
-.quest-panel {
-  min-height: 565px;
-  overflow: hidden;
-}
+/* --- Quest visual: logo stage with edge glow + ambient light, smooth motion --- */
 .quest-visual {
   position: relative;
   display: grid;
-  height: 288px;
+  height: 300px;
   margin: 4px 0 2px;
   place-items: center;
   overflow: hidden;
   border-radius: 22px;
   isolation: isolate;
-  transform: translateZ(0);
-}
-.quest-visual::before {
-  content: "";
-  position: absolute;
-  width: 78%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(53,255,177,.18) 0%, rgba(53,255,177,.08) 35%, transparent 69%);
-  filter: blur(22px);
-  animation: quest-breathe 7.5s ease-in-out infinite;
-}
-.quest-aura {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-  will-change: transform;
-}
-.quest-aura--outer {
-  width: 238px;
-  height: 238px;
-  border: 1px solid rgba(103,255,207,.22);
-  box-shadow: 0 0 38px rgba(53,255,177,.07), inset 0 0 32px rgba(53,255,177,.04);
-  animation: quest-orbit 24s linear infinite;
-}
-.quest-aura--outer::before,
-.quest-aura--outer::after {
-  content: "";
-  position: absolute;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #6dffd0;
-  box-shadow: 0 0 16px rgba(109,255,208,.85);
-}
-.quest-aura--outer::before { top: 14%; left: 14%; }
-.quest-aura--outer::after { right: 8%; bottom: 27%; width: 4px; height: 4px; opacity: .7; }
-
-.quest-aura--inner {
-  width: 188px;
-  height: 188px;
-  border: 1px dashed rgba(244,241,232,.14);
-  animation: quest-orbit-reverse 19s linear infinite;
-}
-.quest-logo-stage {
-  position: relative;
-  z-index: 2;
-  width: 212px;
-  height: 212px;
-  border-radius: 50%;
-  will-change: transform;
-  animation: quest-float 8s cubic-bezier(.45,.05,.55,.95) infinite;
-  filter: drop-shadow(0 18px 32px rgba(0,0,0,.34)) drop-shadow(0 0 22px rgba(53,255,177,.14));
-}
-.quest-logo-stage::after {
-  content: "";
-  position: absolute;
-  inset: 9%;
-  border-radius: 50%;
-  pointer-events: none;
-  background: linear-gradient(115deg, transparent 28%, rgba(255,255,255,.2) 46%, transparent 62%);
-  mix-blend-mode: screen;
-  transform: translateX(-135%);
-  animation: quest-sheen 6.8s ease-in-out infinite;
-}
-.quest-logo {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-  transform: scale(1.055);
-  -webkit-mask-image: radial-gradient(circle, #000 55%, rgba(0,0,0,.96) 72%, transparent 94%);
-  mask-image: radial-gradient(circle, #000 55%, rgba(0,0,0,.96) 72%, transparent 94%);
-}
-.quest-glint {
-  position: absolute;
-  z-index: 3;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: #dffff3;
-  box-shadow: 0 0 8px #dffff3, 0 0 22px #41ffbd, 0 0 44px rgba(65,255,189,.52);
-  animation: quest-glint 5.2s ease-in-out infinite;
 }
 
-.project-grid--clients {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: stretch;
-}
-.project-grid--clients .project-card,
-.project-grid--clients .project-card:nth-child(n) {
-  grid-column: auto;
-  height: 100%;
-}
-.project-grid--clients .project-card > a {
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-}
-.project-grid--clients .project-media,
-.project-grid--clients .project-card--feature .project-media,
-.project-grid--clients .project-card--wide .project-media {
-  aspect-ratio: 16 / 10;
-}
-.project-grid--clients .project-body {
-  display: flex;
-  min-height: 318px;
-  flex: 1;
-  flex-direction: column;
-  gap: 0;
-  padding: 24px;
-}
-.project-grid--clients .project-body h3 {
-  font-size: clamp(1.55rem, 2.15vw, 2.15rem);
-}
-.project-grid--clients .project-body > p {
-  margin: 18px 0 0;
-  line-height: 1.58;
-}
-.project-grid--clients .project-tags {
-  margin-top: auto;
-  padding-top: 24px;
-}
-.project-grid--clients .project-link {
-  margin-top: 16px;
-  align-self: flex-start;
-  justify-self: auto;
-}
-
-@keyframes quest-orbit {
-  to { transform: rotate(360deg); }
-}
-@keyframes quest-orbit-reverse {
-  to { transform: rotate(-360deg); }
-}
-@keyframes quest-float {
-  0%, 100% { transform: translate3d(0, 3px, 0) scale(.995); }
-  50% { transform: translate3d(0, -9px, 0) scale(1.015); }
-}
-@keyframes quest-breathe {
-  0%, 100% { opacity: .55; transform: scale(.9); }
-  50% { opacity: 1; transform: scale(1.08); }
-}
-@keyframes quest-sheen {
-  0%, 25% { transform: translateX(-140%); opacity: 0; }
-  42% { opacity: .72; }
-  58%, 100% { transform: translateX(140%); opacity: 0; }
-}
-@keyframes quest-glint {
-  0%, 100% { transform: translate3d(-63px, -55px, 0) scale(.7); opacity: .35; }
-  45% { transform: translate3d(70px, 42px, 0) scale(1); opacity: .95; }
-  60% { opacity: .45; }
-}
-
-@media (max-width: 1120px) {
-  .project-grid--clients { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (max-width: 780px) {
-  .project-grid--clients { grid-template-columns: 1fr; }
-  .project-grid--clients .project-body { min-height: 0; }
-  .quest-visual { height: 270px; }
-}
-@media (max-width: 520px) {
-  .brand-logo-frame { width: 30px; height: 30px; flex-basis: 30px; }
-  .brand-logo { width: 35px; height: 35px; }
-  .quest-visual { height: 242px; }
-  .quest-logo-stage { width: 188px; height: 188px; }
-  .quest-aura--outer { width: 214px; height: 214px; }
-  .quest-aura--inner { width: 166px; height: 166px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .quest-aura,
-  .quest-logo-stage,
-  .quest-logo-stage::after,
-  .quest-visual::before,
-  .quest-glint {
-    animation: none !important;
-  }
-}
-
-
-/* --- Final hero centering fix: align logo, rings, and glow from exact center --- */
-.quest-visual {
-  position: relative;
-  display: grid;
-  height: 288px;
-  margin: 4px 0 2px;
-  place-items: center;
-  overflow: hidden;
-  border-radius: 22px;
-  isolation: isolate;
-  transform: translateZ(0);
-}
-
-.quest-visual::before,
-.quest-visual::after,
-.quest-aura--outer,
-.quest-aura--inner,
-.quest-logo-stage {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-}
-
-.quest-visual::before {
-  content: "";
-  width: 320px;
-  height: 320px;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  background:
-    radial-gradient(circle,
-      rgba(75,255,190,.28) 0%,
-      rgba(53,255,177,.16) 30%,
-      rgba(53,255,177,.08) 52%,
-      transparent 74%);
-  filter: blur(36px);
-  animation: quest-ambient-breathe 8.5s ease-in-out infinite;
-}
-
-.quest-visual::after {
-  content: "";
-  width: 266px;
-  height: 266px;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  background:
-    radial-gradient(circle,
-      transparent 52%,
-      rgba(105,255,210,.08) 59%,
-      rgba(105,255,210,.03) 68%,
-      transparent 76%);
-  box-shadow:
-    0 0 54px rgba(53,255,177,.10),
-    0 0 96px rgba(53,255,177,.05);
-  animation: quest-halo-breathe 10s ease-in-out infinite;
-}
-
-.quest-aura {
-  border-radius: 50%;
-  pointer-events: none;
-  will-change: transform;
-}
-
-.quest-aura--outer {
-  width: 244px;
-  height: 244px;
-  transform: translate(-50%, -50%);
-  border: 1px solid rgba(103,255,207,.34);
-  box-shadow:
-    0 0 24px rgba(53,255,177,.14),
-    0 0 58px rgba(53,255,177,.09),
-    inset 0 0 36px rgba(53,255,177,.07);
-  animation: quest-orbit-centered 24s linear infinite;
-}
-
-.quest-aura--outer::before,
-.quest-aura--outer::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-  background: #6dffd0;
-  box-shadow: 0 0 16px rgba(109,255,208,.85);
-}
-
-.quest-aura--outer::before {
-  top: 14%;
-  left: 14%;
-  width: 7px;
-  height: 7px;
-}
-
-.quest-aura--outer::after {
-  right: 8%;
-  bottom: 27%;
-  width: 4px;
-  height: 4px;
-  opacity: .7;
-}
-
-.quest-aura--inner {
-  width: 192px;
-  height: 192px;
-  transform: translate(-50%, -50%);
-  border: 1px dashed rgba(244,241,232,.18);
-  box-shadow:
-    0 0 20px rgba(53,255,177,.035),
-    inset 0 0 24px rgba(53,255,177,.045);
-  animation: quest-orbit-reverse-centered 19s linear infinite;
-}
-
-.quest-logo-stage {
-  z-index: 2;
-  display: grid;
-  place-items: center;
-  width: 212px;
-  height: 212px;
-  overflow: hidden;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  filter:
-    drop-shadow(0 18px 34px rgba(0,0,0,.34))
-    drop-shadow(0 0 24px rgba(53,255,177,.25))
-    drop-shadow(0 0 56px rgba(53,255,177,.18));
-  animation: quest-float-centered 8s cubic-bezier(.45,.05,.55,.95) infinite;
-}
-
-.quest-logo-stage::before {
-  content: "";
-  position: absolute;
-  inset: 8px;
-  border-radius: 50%;
-  border: 1px solid rgba(109,255,208,.16);
-  box-shadow:
-    inset 0 0 32px rgba(53,255,177,.075),
-    0 0 32px rgba(53,255,177,.11),
-    0 0 68px rgba(53,255,177,.07);
-  pointer-events: none;
-}
-
-.quest-logo-stage::after {
-  content: none !important;
-  display: none !important;
-}
-
-.quest-glint {
-  display: none !important;
-}
-
-.quest-logo {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: center center;
-  transform: none !important;
-}
-
-@keyframes quest-float-centered {
-  0%, 100% {
-    transform: translate(-50%, -50%) translateY(3px) scale(.995);
-  }
-  50% {
-    transform: translate(-50%, -50%) translateY(-7px) scale(1.01);
-  }
-}
-
-@keyframes quest-orbit-centered {
-  from { transform: translate(-50%, -50%) rotate(0deg); }
-  to { transform: translate(-50%, -50%) rotate(360deg); }
-}
-
-@keyframes quest-orbit-reverse-centered {
-  from { transform: translate(-50%, -50%) rotate(0deg); }
-  to { transform: translate(-50%, -50%) rotate(-360deg); }
-}
-
-@keyframes quest-ambient-breathe {
-  0%, 100% {
-    opacity: .64;
-    transform: translate(-50%, -50%) scale(.95);
-  }
-  50% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.04);
-  }
-}
-
-@keyframes quest-halo-breathe {
-  0%, 100% {
-    opacity: .68;
-    transform: translate(-50%, -50%) scale(.98);
-  }
-  50% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.025);
-  }
-}
-
-@media (max-width: 520px) {
-  .quest-visual { height: 242px; }
-  .quest-visual::before { width: 284px; height: 284px; }
-  .quest-visual::after { width: 238px; height: 238px; }
-  .quest-aura--outer { width: 214px; height: 214px; }
-  .quest-aura--inner { width: 168px; height: 168px; }
-  .quest-logo-stage { width: 188px; height: 188px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .quest-visual::before,
-  .quest-visual::after,
-  .quest-aura--outer,
-  .quest-aura--inner,
-  .quest-logo-stage {
-    animation: none !important;
-  }
-}
-
-
-/* --- Ambient hero refinement: clean logo, soft glow, no line rings --- */
+/* legacy ring markup from an earlier version — no longer part of the design */
 .quest-aura,
-.quest-aura--outer,
-.quest-aura--inner,
 .quest-glint {
-  display: none !important;
-  animation: none !important;
+  display: none;
 }
 
+/* wide, soft ambient wash — a light source, not a drawn circle */
 .quest-visual::before {
   content: "";
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 360px;
-  height: 360px;
+  width: 216px;
+  height: 216px;
   border-radius: 50%;
-  transform: translate(-50%, -50%) scale(.98);
-  background:
-    radial-gradient(circle,
-      rgba(69,255,193,.30) 0%,
-      rgba(43,214,157,.18) 28%,
-      rgba(26,133,100,.10) 48%,
-      rgba(10,48,38,.05) 63%,
-      transparent 78%);
-  filter: blur(34px);
-  opacity: .88;
-  animation: quest-ambient-soft 9s ease-in-out infinite;
+  transform: translate(-50%, -50%) scale(0.97);
+  background: radial-gradient(circle,
+    rgba(80,255,203,.34) 0%,
+    rgba(53,255,177,.16) 38%,
+    rgba(53,255,177,.05) 62%,
+    transparent 78%);
+  filter: blur(30px);
+  animation: quest-ambient-pulse 10s ease-in-out infinite;
 }
 
+/* second, larger wash for depth — same soft falloff, no ring band */
 .quest-visual::after {
   content: "";
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 285px;
-  height: 285px;
-  border-radius: 50%;
-  transform: translate(-50%, -50%) scale(.99);
-  background:
-    radial-gradient(circle,
-      rgba(34,118,91,.13) 0%,
-      rgba(32,164,119,.08) 37%,
-      rgba(66,255,194,.055) 57%,
-      rgba(66,255,194,.02) 68%,
-      transparent 78%);
-  filter: blur(16px);
-  opacity: .92;
-  animation: quest-halo-soft 11s ease-in-out infinite;
-}
-
-.quest-logo-stage {
-  position: absolute;
-  z-index: 2;
-  top: 50%;
-  left: 50%;
-  display: grid;
-  width: 224px;
-  height: 224px;
-  place-items: center;
-  overflow: visible;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  background:
-    radial-gradient(circle,
-      rgba(16,70,55,.42) 0%,
-      rgba(8,39,31,.50) 48%,
-      rgba(5,22,18,.32) 68%,
-      transparent 78%);
-  box-shadow:
-    0 0 34px rgba(53,255,177,.15),
-    0 0 82px rgba(53,255,177,.11),
-    0 0 132px rgba(32,180,132,.06);
-  filter: none;
-  animation: quest-logo-breathe 8s ease-in-out infinite;
-}
-
-.quest-logo-stage::before {
-  content: "";
-  position: absolute;
-  inset: -20px;
-  border: 0;
-  border-radius: 50%;
-  pointer-events: none;
-  background:
-    radial-gradient(circle,
-      rgba(78,255,201,.10) 0%,
-      rgba(53,255,177,.06) 42%,
-      transparent 72%);
-  filter: blur(15px);
-  box-shadow: none;
-}
-
-.quest-logo-stage::after {
-  content: none !important;
-  display: none !important;
-}
-
-.quest-logo {
-  position: relative;
-  z-index: 2;
-  display: block;
-  width: 88%;
-  height: 88%;
-  object-fit: contain;
-  object-position: center center;
-  transform: none !important;
-  filter:
-    drop-shadow(0 0 8px rgba(72,255,196,.22))
-    drop-shadow(0 0 20px rgba(53,255,177,.13));
-}
-
-@keyframes quest-logo-breathe {
-  0%, 100% {
-    transform: translate(-50%, -50%) scale(.99);
-    box-shadow:
-      0 0 30px rgba(53,255,177,.13),
-      0 0 74px rgba(53,255,177,.09),
-      0 0 118px rgba(32,180,132,.05);
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.012);
-    box-shadow:
-      0 0 40px rgba(53,255,177,.19),
-      0 0 96px rgba(53,255,177,.14),
-      0 0 146px rgba(32,180,132,.08);
-  }
-}
-
-@keyframes quest-ambient-soft {
-  0%, 100% {
-    opacity: .72;
-    transform: translate(-50%, -50%) scale(.96);
-  }
-  50% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.04);
-  }
-}
-
-@keyframes quest-halo-soft {
-  0%, 100% {
-    opacity: .72;
-    transform: translate(-50%, -50%) scale(.97);
-  }
-  50% {
-    opacity: .96;
-    transform: translate(-50%, -50%) scale(1.025);
-  }
-}
-
-@media (max-width: 520px) {
-  .quest-visual::before {
-    width: 310px;
-    height: 310px;
-  }
-
-  .quest-visual::after {
-    width: 246px;
-    height: 246px;
-  }
-
-  .quest-logo-stage {
-    width: 194px;
-    height: 194px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .quest-visual::before,
-  .quest-visual::after,
-  .quest-logo-stage {
-    animation: none !important;
-  }
-}
-
-
-/* --- Final glow softening pass --- */
-.quest-visual::before {
-  filter: blur(46px) !important;
-  opacity: .82 !important;
-}
-
-.quest-visual::after {
-  filter: blur(26px) !important;
-  opacity: .78 !important;
-}
-
-.quest-logo-stage {
-  box-shadow:
-    0 0 42px rgba(53,255,177,.16),
-    0 0 96px rgba(53,255,177,.10),
-    0 0 150px rgba(32,180,132,.055) !important;
-}
-
-.quest-logo-stage::before {
-  filter: blur(22px) !important;
-  opacity: .88;
-}
-
-.quest-logo {
-  image-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-}
-/* =========================
-   FINAL HERO POLISH PASS
-   smoother motion + softer blur + more edge glow
-   ========================= */
-
-.quest-aura,
-.quest-aura--outer,
-.quest-aura--inner,
-.quest-glint,
-.quest-logo-stage::after {
-  display: none !important;
-  content: none !important;
-}
-
-.quest-visual,
-.quest-visual::before,
-.quest-visual::after,
-.quest-logo-stage,
-.quest-logo-stage::before,
-.quest-logo {
-  will-change: transform, opacity, filter;
-  backface-visibility: hidden;
-  transform-style: preserve-3d;
-}
-
-.quest-visual {
-  position: relative;
-  display: grid;
-  height: 288px;
-  margin: 4px 0 2px;
-  place-items: center;
-  overflow: hidden;
-  border-radius: 22px;
-  isolation: isolate;
-}
-
-.quest-visual::before,
-.quest-visual::after,
-.quest-logo-stage {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-}
-
-/* large ambient bloom */
-.quest-visual::before {
-  content: "";
-  width: 380px;
-  height: 380px;
-  border-radius: 50%;
-  transform: translate(-50%, -50%) scale(0.98);
-  background:
-    radial-gradient(circle,
-      rgba(70,255,195,0.30) 0%,
-      rgba(42,210,155,0.20) 24%,
-      rgba(28,145,108,0.11) 48%,
-      rgba(10,46,36,0.05) 66%,
-      transparent 80%);
-  filter: blur(58px);
-  opacity: 0.86;
-  animation: questAmbientFloat 12s cubic-bezier(0.42, 0, 0.22, 1) infinite;
-}
-
-/* softer halo */
-.quest-visual::after {
-  content: "";
-  width: 295px;
-  height: 295px;
+  width: 252px;
+  height: 252px;
   border-radius: 50%;
   transform: translate(-50%, -50%) scale(1);
-  background:
-    radial-gradient(circle,
-      rgba(0,0,0,0) 42%,
-      rgba(76,255,201,0.11) 56%,
-      rgba(76,255,201,0.07) 64%,
-      rgba(76,255,201,0.03) 72%,
-      transparent 82%);
-  filter: blur(30px);
-  opacity: 0.82;
-  animation: questHaloFloat 14s cubic-bezier(0.42, 0, 0.22, 1) infinite;
+  background: radial-gradient(circle,
+    rgba(76,255,201,.14) 0%,
+    rgba(76,255,201,.06) 45%,
+    transparent 72%);
+  filter: blur(38px);
+  opacity: .8;
+  animation: quest-ambient-pulse 13s ease-in-out infinite -3s;
 }
 
-/* logo stage */
 .quest-logo-stage {
+  position: relative;
   z-index: 2;
-  width: 224px;
-  height: 224px;
   display: grid;
+  width: 200px;
+  height: 200px;
   place-items: center;
   border-radius: 50%;
-  transform: translate(-50%, -50%);
-  overflow: visible;
-  background:
-    radial-gradient(circle,
-      rgba(16,72,56,0.48) 0%,
-      rgba(8,38,30,0.38) 52%,
-      rgba(4,18,14,0.10) 76%,
-      transparent 100%);
-  box-shadow:
-    0 0 18px rgba(70,255,195,0.20),
-    0 0 42px rgba(53,255,177,0.17),
-    0 0 95px rgba(53,255,177,0.11),
-    0 0 150px rgba(32,180,132,0.07);
-  animation: questLogoFloat 9s cubic-bezier(0.42, 0, 0.22, 1) infinite;
+  animation: quest-logo-float 9s ease-in-out infinite;
 }
 
-/* soft inner mist */
+/* the actual edge glow — a slim, brighter rim hugging the logo's own boundary */
 .quest-logo-stage::before {
   content: "";
   position: absolute;
-  inset: -14px;
+  inset: -7px;
   border-radius: 50%;
-  background:
-    radial-gradient(circle,
-      rgba(80,255,203,0.08) 0%,
-      rgba(80,255,203,0.06) 38%,
-      rgba(80,255,203,0.025) 58%,
-      transparent 78%);
-  filter: blur(26px);
-  opacity: 0.95;
   pointer-events: none;
+  border: 1px solid rgba(109,255,208,.30);
+  box-shadow:
+    0 0 14px rgba(72,255,196,.45),
+    0 0 28px rgba(53,255,177,.28),
+    inset 0 0 16px rgba(53,255,177,.16);
+  animation: quest-edge-glow 9s ease-in-out infinite;
 }
 
-/* logo */
 .quest-logo {
   position: relative;
   z-index: 2;
@@ -1253,106 +595,52 @@ img { display: block; width: 100%; max-width: 100%; }
   height: 88%;
   object-fit: contain;
   object-position: center center;
-  transform: translateZ(0);
-  filter:
-    drop-shadow(0 0 6px rgba(72,255,196,0.28))
-    drop-shadow(0 0 14px rgba(72,255,196,0.20))
-    drop-shadow(0 0 24px rgba(72,255,196,0.12));
-  animation: questLogoGlow 8s cubic-bezier(0.42, 0, 0.22, 1) infinite;
+  filter: drop-shadow(0 12px 22px rgba(0,0,0,.32));
 }
 
-/* smoother, less choppy motion */
-@keyframes questLogoFloat {
-  0% {
-    transform: translate(-50%, -50%) translateY(2px) scale(0.992);
-  }
-  25% {
-    transform: translate(-50%, -50%) translateY(-2px) scale(1.002);
-  }
-  50% {
-    transform: translate(-50%, -50%) translateY(-5px) scale(1.012);
-  }
-  75% {
-    transform: translate(-50%, -50%) translateY(-1px) scale(1.004);
-  }
-  100% {
-    transform: translate(-50%, -50%) translateY(2px) scale(0.992);
-  }
+@keyframes quest-ambient-pulse {
+  0%, 100% { opacity: .62; transform: translate(-50%, -50%) scale(.96); }
+  50%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.05); }
 }
 
-@keyframes questAmbientFloat {
-  0% {
-    transform: translate(-50%, -50%) scale(0.96);
-    opacity: 0.74;
+@keyframes quest-logo-float {
+  0%, 100% { transform: translateY(3px); }
+  50%      { transform: translateY(-8px); }
+}
+
+@keyframes quest-edge-glow {
+  0%, 100% {
+    opacity: .75;
+    box-shadow:
+      0 0 12px rgba(72,255,196,.38),
+      0 0 24px rgba(53,255,177,.22),
+      inset 0 0 14px rgba(53,255,177,.13);
   }
   50% {
-    transform: translate(-50%, -50%) scale(1.04);
-    opacity: 0.94;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(0.96);
-    opacity: 0.74;
+    opacity: 1;
+    box-shadow:
+      0 0 18px rgba(72,255,196,.55),
+      0 0 36px rgba(53,255,177,.34),
+      inset 0 0 20px rgba(53,255,177,.19);
   }
 }
 
-@keyframes questHaloFloat {
-  0% {
-    transform: translate(-50%, -50%) scale(0.985);
-    opacity: 0.70;
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.03);
-    opacity: 0.90;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(0.985);
-    opacity: 0.70;
-  }
-}
-
-@keyframes questLogoGlow {
-  0% {
-    filter:
-      drop-shadow(0 0 6px rgba(72,255,196,0.24))
-      drop-shadow(0 0 12px rgba(72,255,196,0.16))
-      drop-shadow(0 0 20px rgba(72,255,196,0.10));
-  }
-  50% {
-    filter:
-      drop-shadow(0 0 8px rgba(72,255,196,0.34))
-      drop-shadow(0 0 18px rgba(72,255,196,0.24))
-      drop-shadow(0 0 30px rgba(72,255,196,0.16));
-  }
-  100% {
-    filter:
-      drop-shadow(0 0 6px rgba(72,255,196,0.24))
-      drop-shadow(0 0 12px rgba(72,255,196,0.16))
-      drop-shadow(0 0 20px rgba(72,255,196,0.10));
-  }
+@media (max-width: 780px) {
+  .quest-visual { height: 280px; }
 }
 
 @media (max-width: 520px) {
-  .quest-visual::before {
-    width: 325px;
-    height: 325px;
-  }
-
-  .quest-visual::after {
-    width: 250px;
-    height: 250px;
-  }
-
-  .quest-logo-stage {
-    width: 194px;
-    height: 194px;
-  }
+  .quest-visual { height: 240px; }
+  .quest-visual::before { width: 182px; height: 182px; }
+  .quest-visual::after { width: 214px; height: 214px; }
+  .quest-logo-stage { width: 168px; height: 168px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .quest-visual::before,
   .quest-visual::after,
   .quest-logo-stage,
-  .quest-logo {
-    animation: none !important;
+  .quest-logo-stage::before {
+    animation: none;
   }
 }
