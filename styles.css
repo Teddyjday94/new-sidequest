@@ -650,3 +650,21 @@ img { display: block; width: 100%; max-width: 100%; }
     animation: none;
   }
 }
+
+
+/* --- Static hero logo: no motion --- */
+.quest-logo-stage,
+.quest-logo,
+.quest-visual::before,
+.quest-visual::after {
+  animation: none !important;
+}
+
+.quest-logo-stage {
+  transform: none !important;
+}
+
+.quest-visual::before,
+.quest-visual::after {
+  transform: translate(-50%, -50%) !important;
+}
