@@ -482,3 +482,219 @@ img { display: block; width: 100%; max-width: 100%; }
   .reveal,.js .reveal { opacity: 1; transform: none; }
   .cursor-glow { display: none; }
 }
+
+/* --- Portfolio refinement: logo, hero motion, and organized work grid --- */
+.brand-logo-frame {
+  position: relative;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(185,255,88,.1), transparent 68%);
+  box-shadow: 0 0 24px rgba(61,255,177,.09);
+}
+.brand-logo {
+  width: 39px;
+  height: 39px;
+  max-width: none;
+  object-fit: cover;
+  border-radius: 50%;
+  -webkit-mask-image: radial-gradient(circle, #000 56%, rgba(0,0,0,.94) 72%, transparent 96%);
+  mask-image: radial-gradient(circle, #000 56%, rgba(0,0,0,.94) 72%, transparent 96%);
+}
+
+.quest-panel {
+  min-height: 565px;
+  overflow: hidden;
+}
+.quest-visual {
+  position: relative;
+  display: grid;
+  height: 288px;
+  margin: 4px 0 2px;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 22px;
+  isolation: isolate;
+  transform: translateZ(0);
+}
+.quest-visual::before {
+  content: "";
+  position: absolute;
+  width: 78%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(53,255,177,.18) 0%, rgba(53,255,177,.08) 35%, transparent 69%);
+  filter: blur(22px);
+  animation: quest-breathe 7.5s ease-in-out infinite;
+}
+.quest-aura {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform;
+}
+.quest-aura--outer {
+  width: 238px;
+  height: 238px;
+  border: 1px solid rgba(103,255,207,.22);
+  box-shadow: 0 0 38px rgba(53,255,177,.07), inset 0 0 32px rgba(53,255,177,.04);
+  animation: quest-orbit 24s linear infinite;
+}
+.quest-aura--outer::before,
+.quest-aura--outer::after {
+  content: "";
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #6dffd0;
+  box-shadow: 0 0 16px rgba(109,255,208,.85);
+}
+.quest-aura--outer::before { top: 14%; left: 14%; }
+.quest-aura--outer::after { right: 8%; bottom: 27%; width: 4px; height: 4px; opacity: .7; }
+
+.quest-aura--inner {
+  width: 188px;
+  height: 188px;
+  border: 1px dashed rgba(244,241,232,.14);
+  animation: quest-orbit-reverse 19s linear infinite;
+}
+.quest-logo-stage {
+  position: relative;
+  z-index: 2;
+  width: 212px;
+  height: 212px;
+  border-radius: 50%;
+  will-change: transform;
+  animation: quest-float 8s cubic-bezier(.45,.05,.55,.95) infinite;
+  filter: drop-shadow(0 18px 32px rgba(0,0,0,.34)) drop-shadow(0 0 22px rgba(53,255,177,.14));
+}
+.quest-logo-stage::after {
+  content: "";
+  position: absolute;
+  inset: 9%;
+  border-radius: 50%;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 28%, rgba(255,255,255,.2) 46%, transparent 62%);
+  mix-blend-mode: screen;
+  transform: translateX(-135%);
+  animation: quest-sheen 6.8s ease-in-out infinite;
+}
+.quest-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  transform: scale(1.055);
+  -webkit-mask-image: radial-gradient(circle, #000 55%, rgba(0,0,0,.96) 72%, transparent 94%);
+  mask-image: radial-gradient(circle, #000 55%, rgba(0,0,0,.96) 72%, transparent 94%);
+}
+.quest-glint {
+  position: absolute;
+  z-index: 3;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #dffff3;
+  box-shadow: 0 0 8px #dffff3, 0 0 22px #41ffbd, 0 0 44px rgba(65,255,189,.52);
+  animation: quest-glint 5.2s ease-in-out infinite;
+}
+
+.project-grid--clients {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+}
+.project-grid--clients .project-card,
+.project-grid--clients .project-card:nth-child(n) {
+  grid-column: auto;
+  height: 100%;
+}
+.project-grid--clients .project-card > a {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
+.project-grid--clients .project-media,
+.project-grid--clients .project-card--feature .project-media,
+.project-grid--clients .project-card--wide .project-media {
+  aspect-ratio: 16 / 10;
+}
+.project-grid--clients .project-body {
+  display: flex;
+  min-height: 318px;
+  flex: 1;
+  flex-direction: column;
+  gap: 0;
+  padding: 24px;
+}
+.project-grid--clients .project-body h3 {
+  font-size: clamp(1.55rem, 2.15vw, 2.15rem);
+}
+.project-grid--clients .project-body > p {
+  margin: 18px 0 0;
+  line-height: 1.58;
+}
+.project-grid--clients .project-tags {
+  margin-top: auto;
+  padding-top: 24px;
+}
+.project-grid--clients .project-link {
+  margin-top: 16px;
+  align-self: flex-start;
+  justify-self: auto;
+}
+
+@keyframes quest-orbit {
+  to { transform: rotate(360deg); }
+}
+@keyframes quest-orbit-reverse {
+  to { transform: rotate(-360deg); }
+}
+@keyframes quest-float {
+  0%, 100% { transform: translate3d(0, 3px, 0) scale(.995); }
+  50% { transform: translate3d(0, -9px, 0) scale(1.015); }
+}
+@keyframes quest-breathe {
+  0%, 100% { opacity: .55; transform: scale(.9); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+@keyframes quest-sheen {
+  0%, 25% { transform: translateX(-140%); opacity: 0; }
+  42% { opacity: .72; }
+  58%, 100% { transform: translateX(140%); opacity: 0; }
+}
+@keyframes quest-glint {
+  0%, 100% { transform: translate3d(-63px, -55px, 0) scale(.7); opacity: .35; }
+  45% { transform: translate3d(70px, 42px, 0) scale(1); opacity: .95; }
+  60% { opacity: .45; }
+}
+
+@media (max-width: 1120px) {
+  .project-grid--clients { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 780px) {
+  .project-grid--clients { grid-template-columns: 1fr; }
+  .project-grid--clients .project-body { min-height: 0; }
+  .quest-visual { height: 270px; }
+}
+@media (max-width: 520px) {
+  .brand-logo-frame { width: 30px; height: 30px; flex-basis: 30px; }
+  .brand-logo { width: 35px; height: 35px; }
+  .quest-visual { height: 242px; }
+  .quest-logo-stage { width: 188px; height: 188px; }
+  .quest-aura--outer { width: 214px; height: 214px; }
+  .quest-aura--inner { width: 166px; height: 166px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .quest-aura,
+  .quest-logo-stage,
+  .quest-logo-stage::after,
+  .quest-visual::before,
+  .quest-glint {
+    animation: none !important;
+  }
+}
