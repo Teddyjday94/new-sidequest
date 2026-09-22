@@ -1093,3 +1093,32 @@ img { display: block; width: 100%; max-width: 100%; }
     animation: none !important;
   }
 }
+
+
+/* --- Final glow softening pass --- */
+.quest-visual::before {
+  filter: blur(46px) !important;
+  opacity: .82 !important;
+}
+
+.quest-visual::after {
+  filter: blur(26px) !important;
+  opacity: .78 !important;
+}
+
+.quest-logo-stage {
+  box-shadow:
+    0 0 42px rgba(53,255,177,.16),
+    0 0 96px rgba(53,255,177,.10),
+    0 0 150px rgba(32,180,132,.055) !important;
+}
+
+.quest-logo-stage::before {
+  filter: blur(22px) !important;
+  opacity: .88;
+}
+
+.quest-logo {
+  image-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+}
