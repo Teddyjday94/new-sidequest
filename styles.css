@@ -594,10 +594,20 @@ img { display: block; width: 100%; max-width: 100%; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 52.5% center;
+  object-position: center center;
+
+  /* The source artwork has 84px of transparent space on the left
+     and 20px on the right. Moving it left by 4.44% centers the
+     visible artwork exactly inside the 200px hero circle. */
+  transform: translateX(-4.44%);
+
   border-radius: 50%;
-  -webkit-mask-image: radial-gradient(circle, #000 58%, rgba(0,0,0,.85) 72%, transparent 92%);
-  mask-image: radial-gradient(circle, #000 58%, rgba(0,0,0,.85) 72%, transparent 92%);
+
+  /* Keep the circular fade visually centered on the stage while
+     the artwork itself is shifted left. */
+  -webkit-mask-image: radial-gradient(circle at 54.44% 50%, #000 58%, rgba(0,0,0,.85) 72%, transparent 92%);
+  mask-image: radial-gradient(circle at 54.44% 50%, #000 58%, rgba(0,0,0,.85) 72%, transparent 92%);
+
   filter: drop-shadow(0 12px 22px rgba(0,0,0,.32));
 }
 
