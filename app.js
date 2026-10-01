@@ -65,6 +65,8 @@
       mowLink.href = 'https://ascensionmowngeaux.com/';
       var mowDomain = mowLink.querySelector('.browser-bar small');
       if (mowDomain) mowDomain.textContent = 'ascensionmowngeaux.com';
+      var mowCard = mowLink.closest('.project-card');
+      if (mowCard) mowCard.setAttribute('data-project', 'ascension-mow-geaux');
     }
 
     var grid = document.querySelector('.project-grid--clients');
@@ -101,7 +103,10 @@
         '.brand-logo{width:36px;height:36px;max-width:none;object-fit:cover;object-position:center center;}',
         '.quest-logo-stage{place-items:center;}',
         '.quest-logo{width:94%;height:94%;margin:auto;object-fit:contain;object-position:center center;transform:translateY(-2px);}',
-        '@media (max-width:520px){.quest-logo{width:93%;height:93%;transform:translateY(-1px);}}'
+        '[data-project="ascension-mow-geaux"] .project-media,[data-project="river-city-rolloffs"] .project-media{background:#0d1015;}',
+        '[data-project="ascension-mow-geaux"] .project-media img,[data-project="river-city-rolloffs"] .project-media img{object-fit:contain;object-position:center center;padding:14px 18px;transform:scale(.96);}',
+        '[data-project="ascension-mow-geaux"]:hover .project-media img,[data-project="river-city-rolloffs"]:hover .project-media img{transform:scale(1);}',
+        '@media (max-width:520px){.quest-logo{width:93%;height:93%;transform:translateY(-1px);}[data-project="ascension-mow-geaux"] .project-media img,[data-project="river-city-rolloffs"] .project-media img{padding:10px 12px;transform:scale(.97);}}'
       ].join('');
       document.head.appendChild(logoTune);
     }
