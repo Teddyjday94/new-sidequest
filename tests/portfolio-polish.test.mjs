@@ -5,10 +5,10 @@ import test from 'node:test';
 const app = await readFile(new URL('../app.js', import.meta.url), 'utf8');
 
 test('uses a zoomed-out treatment only for the Mow n Geaux and River City covers', () => {
-  assert.ok(app.includes("mowCover.classList.add('project-cover--wide-view')"));
-  assert.ok(app.includes('<div class="project-media"><img class="project-cover--wide-view"'));
-  assert.ok(app.includes('.project-cover--wide-view{object-fit:contain!important;object-position:center center!important;'));
-  assert.ok(app.includes('.project-card:hover .project-cover--wide-view{transform:scale(1);}'));
+  assert.ok(app.includes("mowCard.setAttribute('data-project', 'ascension-mow-geaux')"));
+  assert.ok(app.includes("article.setAttribute('data-project', 'river-city-rolloffs')"));
+  assert.ok(app.includes('[data-project="ascension-mow-geaux"] .project-media img,[data-project="river-city-rolloffs"] .project-media img{object-fit:contain;object-position:center center;'));
+  assert.ok(app.includes('[data-project="ascension-mow-geaux"]:hover .project-media img,[data-project="river-city-rolloffs"]:hover .project-media img{transform:scale(1);}'));
 });
 
 test('removes the circular hero-logo treatment while keeping the logo centered', () => {
