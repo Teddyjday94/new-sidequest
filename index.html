@@ -6,7 +6,7 @@
   <title>SideQuest Creative | Custom Websites With Personality</title>
   <meta name="description" content="SideQuest Creative designs and builds custom websites for local businesses, creators, and ideas that deserve more than a template.">
   <meta name="theme-color" content="#080a0d">
-  <link rel="canonical" href="https://new-sidequest.vercel.app">
+  <link rel="canonical" href="https://new-sidequest.vercel.app/">
   <meta property="og:title" content="SideQuest Creative | Custom Websites With Personality">
   <meta property="og:description" content="Professional custom websites with personality, motion, and a clear job to do.">
   <meta property="og:type" content="website">
@@ -21,319 +21,65 @@
   <link rel="stylesheet" href="styles.css">
   <script src="app.js" defer></script>
 </head>
-<body>
+<body data-page="home">
   <a class="skip-link" href="#main">Skip to content</a>
   <div class="cursor-glow" aria-hidden="true"></div>
-
+  <div class="scroll-progress" aria-hidden="true"><span></span></div>
   <header class="site-header" id="site-header">
     <nav class="nav shell" aria-label="Primary">
-      <a class="brand" href="#top" aria-label="SideQuest Creative home">
-        <span class="brand-logo-frame" aria-hidden="true"><img class="brand-logo" src="assets/brand/sidequest-logo-v4.webp" alt=""></span>
-        <span>SideQuest <strong>Creative</strong></span>
-      </a>
-
-      <button id="menu-toggle" class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
-        <span>Menu</span><i aria-hidden="true"></i>
-      </button>
-
-      <div id="nav-links" class="nav-links">
-        <a href="#work">Work</a>
-        <a href="#capabilities">What I do</a>
-        <a href="#process">Process</a>
-        <a class="nav-cta" href="#contact">Start a project <span aria-hidden="true">↗</span></a>
-      </div>
+      <a class="brand" href="index.html" aria-label="SideQuest Creative home"><span class="brand-logo-frame" aria-hidden="true"><img class="brand-logo" src="assets/brand/sidequest-logo-v4.webp" alt=""></span><span>SideQuest <strong>Creative</strong></span></a>
+      <button id="menu-toggle" class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links"><span>Menu</span><i aria-hidden="true"></i></button>
+      <div id="nav-links" class="nav-links"><a data-nav-page="home" href="index.html">Home</a><a data-nav-page="work" href="work.html">Work</a><a data-nav-page="services" href="services.html">Services</a><a data-nav-page="about" href="about.html">About</a><a class="nav-cta" data-magnetic href="about.html#contact">Start a Project <span aria-hidden="true">↗</span></a></div>
     </nav>
   </header>
-
   <main id="main">
     <section class="hero" id="top">
-      <div class="hero-noise" aria-hidden="true"></div>
-      <div class="hero-orbit hero-orbit--one" aria-hidden="true"></div>
-      <div class="hero-orbit hero-orbit--two" aria-hidden="true"></div>
-
+      <div class="hero-noise" aria-hidden="true"></div><div class="hero-orbit hero-orbit--one" aria-hidden="true"></div><div class="hero-orbit hero-orbit--two" aria-hidden="true"></div>
       <div class="shell hero-grid">
-        <div class="hero-copy-block reveal">
+        <div class="hero-copy-block reveal" data-reveal-group>
           <p class="eyebrow"><span></span> Independent web design and development</p>
-          <h1>Websites with <em>personality.</em><br>Built to pull their weight.</h1>
-          <p class="hero-lede">SideQuest Creative makes custom websites for local businesses, creators, and big ideas. Clean enough to feel professional. Distinct enough to be remembered.</p>
-
-          <div class="hero-actions">
-            <a class="button button--primary" href="#work">Explore the work <span aria-hidden="true">↓</span></a>
-            <a class="button button--ghost" href="#contact">Tell me about your project <span aria-hidden="true">↗</span></a>
-          </div>
-
-          <div class="hero-proof" aria-label="Portfolio summary">
-            <div><strong>06</strong><span>Client builds shown</span></div>
-            <div><strong>02</strong><span>Creative experiments</span></div>
-            <div><strong>01</strong><span>Designer from idea to launch</span></div>
-          </div>
+          <h1 class="reveal-mask"><span class="reveal-line">Websites with <em>personality.</em></span><span class="reveal-line">Built to pull their weight.</span></h1>
+          <p class="hero-lede">SideQuest Creative makes custom websites for local businesses, creators, and ideas that deserve more than a template. Professional enough to earn trust. Distinct enough to be remembered.</p>
+          <div class="hero-actions"><a class="button button--primary" data-magnetic href="work.html">Explore the work <span aria-hidden="true">↗</span></a><a class="button button--ghost" data-magnetic href="about.html#contact">Start a Project <span aria-hidden="true">↗</span></a></div>
+          <div class="hero-proof" aria-label="Portfolio summary"><div><strong>12</strong><span>Portfolio projects</span></div><div><strong>04</strong><span>Featured here</span></div><div><strong>01</strong><span>Designer from idea to launch</span></div></div>
         </div>
-
-        <div class="quest-panel reveal" aria-label="SideQuest Creative approach">
-          <div class="quest-panel__top">
-            <span>SideQuest Creative</span>
-            <span class="live-dot">Open for projects</span>
-          </div>
-
-          <div class="quest-visual" aria-hidden="true">
-            <div class="quest-aura quest-aura--outer"></div>
-            <div class="quest-aura quest-aura--inner"></div>
-            <div class="quest-logo-stage">
-              <img class="quest-logo" src="assets/brand/sidequest-logo-clean.webp" alt="">
-            </div>
-            <div class="quest-glint"></div>
-          </div>
-
-          <div class="quest-panel__copy">
-            <p class="mini-label">The brief</p>
-            <h2>Make it useful.<br>Make it feel like you.</h2>
-            <p>Strategy, design, development, motion, forms, booking flows, deployment, and the details that make a site feel finished.</p>
-          </div>
-
-          <div class="quest-tags" aria-label="Services">
-            <span>Design</span><span>Development</span><span>Motion</span><span>Launch</span>
-          </div>
+        <div class="quest-panel reveal image-reveal" data-parallax aria-label="SideQuest Creative approach">
+          <div class="quest-panel__top"><span>SideQuest Creative</span><span class="live-dot">Open for projects</span></div>
+          <div class="quest-visual" aria-hidden="true"><div class="quest-aura quest-aura--outer"></div><div class="quest-aura quest-aura--inner"></div><div class="quest-logo-stage"><img class="quest-logo" src="assets/brand/sidequest-logo-clean.webp" alt=""></div><div class="quest-glint"></div></div>
+          <div class="quest-panel__copy"><p class="mini-label">The brief</p><h2>Make it useful.<br>Make it feel like you.</h2><p>Strategy, design, development, motion, forms, deployment, and the details that make a site feel finished.</p></div>
+          <div class="quest-tags" aria-label="Services"><span>Design</span><span>Development</span><span>Motion</span><span>Launch</span></div>
         </div>
       </div>
-
-      <div class="hero-marquee" aria-hidden="true">
-        <div>
-          <span>Custom design</span><b>✦</b><span>Responsive builds</span><b>✦</b><span>Motion and interaction</span><b>✦</b><span>Lead forms</span><b>✦</b><span>Booking flows</span><b>✦</b><span>Vercel deployment</span><b>✦</b>
-          <span>Custom design</span><b>✦</b><span>Responsive builds</span><b>✦</b><span>Motion and interaction</span><b>✦</b><span>Lead forms</span><b>✦</b><span>Booking flows</span><b>✦</b><span>Vercel deployment</span><b>✦</b>
-        </div>
-      </div>
+      <div class="hero-marquee" aria-hidden="true"><div><span>Custom design</span><b>✦</b><span>Responsive builds</span><b>✦</b><span>Motion and interaction</span><b>✦</b><span>Lead forms</span><b>✦</b><span>Vercel deployment</span><b>✦</b><span>Custom design</span><b>✦</b><span>Responsive builds</span><b>✦</b><span>Motion and interaction</span><b>✦</b><span>Lead forms</span><b>✦</b><span>Vercel deployment</span><b>✦</b></div></div>
     </section>
-
-    <section class="work-section section" id="work">
-      <div class="shell">
-        <div class="section-intro reveal">
-          <div>
-            <p class="section-kicker">Selected work / 01</p>
-            <h2>Different businesses.<br>Different answers.</h2>
-          </div>
-          <p>I do not want every client site to look like it came from the same template. The visual direction changes with the business, but the goal stays the same: make it clear, memorable, and easy to use.</p>
-        </div>
-
-        <div class="project-grid project-grid--clients">
-          <article class="project-card reveal" data-tilt>
-            <a href="https://awag-preview.vercel.app/" target="_blank" rel="noopener">
-              <div class="project-browser">
-                <div class="browser-bar"><span></span><span></span><span></span><small>awag-preview.vercel.app</small></div>
-                <div class="project-media"><img src="assets/projects/awag.webp" alt="Ascension Wash and Geaux website homepage" loading="eager"></div>
-                <div class="project-shade" aria-hidden="true"></div>
-                <span class="project-index">01</span>
-              </div>
-              <div class="project-body">
-                <div><p class="project-type">Pressure washing / Local service</p><h3>Ascension Wash &amp; Geaux</h3></div>
-                <p>Built around visual proof, fast quote requests, and before-and-after work that sells the service before the customer ever makes a call.</p>
-                <div class="project-tags"><span>Lead generation</span><span>Before + after</span><span>Responsive</span></div>
-                <span class="project-link">View live site <b aria-hidden="true">↗</b></span>
-              </div>
+    <section class="work-section section" id="featured-work">
+      <div class="shell"><div class="section-intro reveal"><div><p class="section-kicker">Featured work / 01</p><h2>A few different answers.</h2></div><p>Four projects that show the range. The full archive lives on the Work page.</p></div>
+        <div class="project-grid project-grid--featured" data-reveal-group>
+          <article class="project-card project-card--feature reveal image-reveal" data-project="river-city-rolloffs" data-category="local-business" data-tilt>
+            <a href="https://rivercityrolloffsla.com/" target="_blank" rel="noopener">
+              <div class="project-browser"><div class="browser-bar"><span></span><span></span><span></span><small>rivercityrolloffsla.com</small></div><div class="project-media"><img src="assets/projects/river-city-rolloffs.png" alt="River City RollOffs website homepage" loading="eager"></div><div class="project-shade" aria-hidden="true"></div><span class="project-index">01</span></div>
+              <div class="project-body"><div><p class="project-type">Dumpster rentals / Local service</p><h3>River City RollOffs</h3></div><p>A bold rental site built around fast requests, clear service areas, real jobsite proof, and direct call-or-text paths.</p><div class="project-tags"><span>Multi-page</span><span>Lead generation</span><span>Local SEO</span></div><span class="project-link">View live site <b aria-hidden="true">↗</b></span></div>
             </a>
           </article>
-
-          <article class="project-card reveal" data-tilt>
-            <a href="https://handfx-three.vercel.app/" target="_blank" rel="noopener">
-              <div class="project-browser">
-                <div class="browser-bar"><span></span><span></span><span></span><small>handfx-three.vercel.app</small></div>
-                <div class="project-media"><img src="assets/projects/handfx.webp" alt="Hand Effects interactive camera experience" loading="lazy"></div>
-                <div class="project-shade" aria-hidden="true"></div>
-                <span class="project-index">02</span>
-              </div>
-              <div class="project-body">
-                <div><p class="project-type">Interactive experience</p><h3>Hand Effects</h3></div>
-                <p>A browser experience that reacts to webcam hand movement with real-time effects, recording tools, and a UI that feels more like a product than a brochure.</p>
-                <div class="project-tags"><span>Interaction</span><span>Camera</span><span>Product UI</span></div>
-                <span class="project-link">View live site <b aria-hidden="true">↗</b></span>
-              </div>
-            </a>
+          <article class="project-card reveal image-reveal" data-project="quotewake" data-category="saas-product" data-tilt>
+            <a href="https://quotewake.vercel.app/" target="_blank" rel="noopener"><div class="project-browser"><div class="browser-bar"><span></span><span></span><span></span><small>quotewake.vercel.app</small></div><div class="project-media"><img src="assets/projects/quotewake-portfolio.webp" alt="Revenue recovery dashboard interface preview" loading="lazy"></div><div class="project-shade" aria-hidden="true"></div><span class="project-index">02</span></div><div class="project-body"><div><p class="project-type">SaaS / Revenue automation</p><h3>QuoteWake</h3></div><p>A focused SaaS product for service businesses that follows up on quiet estimates and makes recovered revenue visible.</p><div class="project-tags"><span>SaaS product</span><span>Automation</span><span>Dashboard</span></div><span class="project-link">View live site <b aria-hidden="true">↗</b></span></div></a>
           </article>
-
-          <article class="project-card reveal" data-tilt>
-            <a href="https://santa-jim-hope-site.vercel.app/" target="_blank" rel="noopener">
-              <div class="project-browser">
-                <div class="browser-bar"><span></span><span></span><span></span><small>santa-jim-hope-site.vercel.app</small></div>
-                <div class="project-media"><img src="assets/projects/santa-jim-hope.jpg" alt="Santa Jim Hope website" loading="lazy"></div>
-                <div class="project-shade" aria-hidden="true"></div>
-                <span class="project-index">03</span>
-              </div>
-              <div class="project-body">
-                <div><p class="project-type">Events / Booking</p><h3>The Santa Experience</h3></div>
-                <p>A warm, photo-led site designed around real event moments, visit types, trust, and a booking path that can grow into a full scheduling system.</p>
-                <div class="project-tags"><span>Booking</span><span>Gallery</span><span>Seasonal brand</span></div>
-                <span class="project-link">View live site <b aria-hidden="true">↗</b></span>
-              </div>
-            </a>
+          <article class="project-card reveal image-reveal" data-project="ascension-wash-geaux" data-category="local-business" data-tilt>
+            <a href="https://awag-preview.vercel.app/" target="_blank" rel="noopener"><div class="project-browser"><div class="browser-bar"><span></span><span></span><span></span><small>awag-preview.vercel.app</small></div><div class="project-media"><img src="assets/projects/awag.webp" alt="Ascension Wash and Geaux website homepage" loading="lazy"></div><div class="project-shade" aria-hidden="true"></div><span class="project-index">03</span></div><div class="project-body"><div><p class="project-type">Pressure washing / Local service</p><h3>Ascension Wash & Geaux</h3></div><p>A service-first website built around real project proof, fast estimate requests, clear coverage, and a polished path from browsing to booking.</p><div class="project-tags"><span>Lead generation</span><span>Before + after</span><span>Responsive</span></div><span class="project-link">View live site <b aria-hidden="true">↗</b></span></div></a>
           </article>
-
-          <article class="project-card reveal" data-tilt>
-            <a href="https://unfiltered-beige.vercel.app/" target="_blank" rel="noopener">
-              <div class="project-browser">
-                <div class="browser-bar"><span></span><span></span><span></span><small>unfiltered-beige.vercel.app</small></div>
-                <div class="project-media project-media--unfiltered"><img src="https://raw.githubusercontent.com/Teddyjday94/unfiltered/main/public/hero-studio-hq.png" alt="Unfiltered podcast-inspired website" loading="lazy"></div>
-                <div class="project-shade" aria-hidden="true"></div>
-                <span class="project-index">04</span>
-              </div>
-              <div class="project-body">
-                <div><p class="project-type">Entertainment / Editorial</p><h3>Unfiltered</h3></div>
-                <p>A multi-page fan experience with a richer editorial feel, crew stories, timeline content, and cinematic motion that keeps the site moving without turning it into a slideshow.</p>
-                <div class="project-tags"><span>Multi-page</span><span>Storytelling</span><span>Motion</span></div>
-                <span class="project-link">View live site <b aria-hidden="true">↗</b></span>
-              </div>
-            </a>
-          </article>
-
-          <article class="project-card reveal" data-tilt>
-            <a href="https://ascensionmowngeaux.vercel.app/" target="_blank" rel="noopener">
-              <div class="project-browser">
-                <div class="browser-bar"><span></span><span></span><span></span><small>ascensionmowngeaux.vercel.app</small></div>
-                <div class="project-media"><img src="assets/projects/ascension-mow-n-geaux.png" alt="Ascension Mow and Geaux website homepage" loading="lazy"></div>
-                <div class="project-shade" aria-hidden="true"></div>
-                <span class="project-index">05</span>
-              </div>
-              <div class="project-body">
-                <div><p class="project-type">Lawn care / Property services</p><h3>Ascension Mow &amp; Geaux</h3></div>
-                <p>A service-first build with real project media, clear coverage, and a more polished path from browsing the work to requesting an estimate.</p>
-                <div class="project-tags"><span>Service pages</span><span>Video hero</span><span>Estimates</span></div>
-                <span class="project-link">View live site <b aria-hidden="true">↗</b></span>
-              </div>
-            </a>
-          </article>
-
-          <article class="project-card reveal" data-tilt>
-            <a href="https://helping-hands-coral-alpha.vercel.app/" target="_blank" rel="noopener">
-              <div class="project-browser">
-                <div class="browser-bar"><span></span><span></span><span></span><small>helping-hands-coral-alpha.vercel.app</small></div>
-                <div class="project-media"><img src="assets/projects/helping-hands.webp" alt="Helping Hands lawn care website" loading="lazy"></div>
-                <div class="project-shade" aria-hidden="true"></div>
-                <span class="project-index">06</span>
-              </div>
-              <div class="project-body">
-                <div><p class="project-type">Lawn care / Local business</p><h3>Helping Hands</h3></div>
-                <p>A straightforward local-service site that makes the work easy to understand, the coverage easy to find, and the estimate request easy to start.</p>
-                <div class="project-tags"><span>Local service</span><span>Photo proof</span><span>Lead form</span></div>
-                <span class="project-link">View live site <b aria-hidden="true">↗</b></span>
-              </div>
-            </a>
+          <article class="project-card reveal image-reveal" data-project="guild-os" data-category="saas-product" data-tilt>
+            <a href="https://guild-os-ebon.vercel.app/" target="_blank" rel="noopener"><div class="project-browser"><div class="browser-bar"><span></span><span></span><span></span><small>guild-os-ebon.vercel.app</small></div><div class="project-media"><img src="assets/projects/guild-os-portfolio.webp" alt="Gaming guild operations dashboard preview" loading="lazy"></div><div class="project-shade" aria-hidden="true"></div><span class="project-index">04</span></div><div class="project-body"><div><p class="project-type">SaaS / Gaming communities</p><h3>GuildOS</h3></div><p>A Discord-first command center for events, rosters, recruitment, attendance, and officer coordination.</p><div class="project-tags"><span>Community SaaS</span><span>Discord-first</span><span>Dashboard</span></div><span class="project-link">View live site <b aria-hidden="true">↗</b></span></div></a>
           </article>
         </div>
+        <div class="section-action"><a class="button button--ghost" href="work.html">See all 12 projects <span aria-hidden="true">↗</span></a></div>
       </div>
     </section>
-
-    <section class="lab-section section" id="lab">
-      <div class="shell">
-        <div class="section-intro reveal">
-          <div>
-            <p class="section-kicker section-kicker--coral">Creative lab / 02</p>
-            <h2>Where the rules get<br>a little looser.</h2>
-          </div>
-          <p>Client work proves I can solve a business problem. These projects show how far the design, motion, world-building, and interface work can go when the brief is simply: make something memorable.</p>
-        </div>
-
-        <div class="lab-grid">
-          <a class="lab-card lab-card--red reveal" href="https://targaryan.vercel.app/" target="_blank" rel="noopener">
-            <div class="lab-art"><img src="assets/projects/targaryan.webp" alt="Targaryen interactive website" loading="lazy"></div>
-            <div class="lab-content">
-              <div><span>Fantasy campaign experience</span><h3>The Black Queen</h3></div>
-              <p>Interactive maps, character and dragon systems, ravens, ranks, and a full visual world built around one fictional campaign.</p>
-              <span class="lab-open">Enter project ↗</span>
-            </div>
-          </a>
-
-          <a class="lab-card lab-card--violet reveal" href="https://magic-rpg.vercel.app/" target="_blank" rel="noopener">
-            <div class="lab-art"><img src="assets/projects/magic-rpg.webp" alt="Magic RPG browser game website" loading="lazy"></div>
-            <div class="lab-content">
-              <div><span>Browser RPG</span><h3>The Rogue Star-Walker</h3></div>
-              <p>A playable fantasy interface with combat, character systems, world progression, and game-like UI built directly for the browser.</p>
-              <span class="lab-open">Enter project ↗</span>
-            </div>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <section class="capabilities section" id="capabilities">
-      <div class="shell">
-        <div class="section-intro section-intro--compact reveal">
-          <div><p class="section-kicker">Capabilities / 03</p><h2>More than a pretty homepage.</h2></div>
-        </div>
-
-        <div class="cap-grid">
-          <article class="cap-card reveal"><span>01</span><h3>Custom direction</h3><p>A visual system that fits the business instead of forcing every project into the same template.</p></article>
-          <article class="cap-card reveal"><span>02</span><h3>Responsive development</h3><p>Layouts and interactions designed to feel intentional on phones, tablets, laptops, and large screens.</p></article>
-          <article class="cap-card reveal"><span>03</span><h3>Motion and interaction</h3><p>Transitions, hover states, reveals, media, and small details that add energy without getting in the way.</p></article>
-          <article class="cap-card reveal"><span>04</span><h3>Business tools</h3><p>Quote requests, contact forms, booking flows, galleries, service pages, and the pieces that help turn visits into action.</p></article>
-        </div>
-      </div>
-    </section>
-
-    <section class="process section" id="process">
-      <div class="shell">
-        <div class="process-heading reveal">
-          <p class="section-kicker">The process / 04</p>
-          <h2>One person from first idea to launch.</h2>
-          <p>No handoff maze. You work directly with me through the whole build.</p>
-        </div>
-
-        <ol class="process-track">
-          <li class="reveal"><span>01</span><div><h3>Talk</h3><p>We figure out what the business does, who the site is for, and what needs to happen when someone lands on it.</p></div></li>
-          <li class="reveal"><span>02</span><div><h3>Direction</h3><p>I shape the look, layout, content hierarchy, and experience around your photos, brand, and goals.</p></div></li>
-          <li class="reveal"><span>03</span><div><h3>Build</h3><p>The site gets developed, animated, tested, and refined across screen sizes with the real content in place.</p></div></li>
-          <li class="reveal"><span>04</span><div><h3>Launch</h3><p>I connect hosting and the domain, make sure the important pieces work, and get the finished site out into the world.</p></div></li>
-        </ol>
-      </div>
-    </section>
-
-    <section class="contact section" id="contact">
-      <div class="shell contact-layout">
-        <div class="contact-copy reveal">
-          <p class="section-kicker">Start a project / 05</p>
-          <h2>Have a business that deserves a better website?</h2>
-          <p>Send me the basics. I will come back with questions, ideas, and a sensible next step instead of a giant sales pitch.</p>
-          <a class="email-link" href="mailto:thomasdbiz26@gmail.com"><span>Email directly</span><strong>thomasdbiz26@gmail.com ↗</strong></a>
-        </div>
-
-        <form id="inquiry-form" class="inquiry-form reveal" action="https://formsubmit.co/thomasdbiz26@gmail.com" method="POST">
-          <input type="hidden" name="_subject" value="New SideQuest Creative inquiry">
-          <input type="hidden" name="_template" value="table">
-          <input class="form-trap" type="text" name="_honey" tabindex="-1" autocomplete="off">
-
-          <div class="field-row">
-            <label><span>Name</span><input name="name" autocomplete="name" placeholder="Your name" required></label>
-            <label><span>Email</span><input name="email" type="email" autocomplete="email" placeholder="you@example.com" required></label>
-          </div>
-
-          <div class="field-row">
-            <label><span>Business or project</span><input name="business" autocomplete="organization" placeholder="What is it called?"></label>
-            <label><span>What are you looking for?</span>
-              <select name="project_type">
-                <option>New website</option>
-                <option>Website redesign</option>
-                <option>Landing page</option>
-                <option>Interactive experience</option>
-                <option>Not sure yet</option>
-              </select>
-            </label>
-          </div>
-
-          <label class="field-full"><span>Tell me what you need</span><textarea name="message" rows="6" placeholder="What does the business do, what do you have now, and what would you like the new site to accomplish?" required></textarea></label>
-
-          <div class="form-foot">
-            <button class="button button--primary" type="submit">Send inquiry <span aria-hidden="true">↗</span></button>
-            <p id="form-status" role="status" aria-live="polite"></p>
-          </div>
-        </form>
-      </div>
-    </section>
+    <section class="services-preview section" id="services-preview"><div class="shell"><div class="section-intro reveal"><div><p class="section-kicker">What I build / 02</p><h2>Not a menu of templates.<br>A toolkit for the job.</h2></div><p>Each project gets the combination of structure, visuals, interaction, and business tooling it actually needs.</p></div><div class="service-preview-grid" data-reveal-group><article class="service-preview-card reveal"><span>01</span><h3>Custom websites</h3><p>Purpose-built sites shaped around your business, audience, content, and goals.</p></article><article class="service-preview-card reveal"><span>02</span><h3>Website redesigns</h3><p>Take an outdated or generic site and rebuild the experience without losing what already works.</p></article><article class="service-preview-card reveal"><span>03</span><h3>Landing / campaign experiences</h3><p>Focused pages for launches, offers, events, products, and campaigns that need a clear action.</p></article><article class="service-preview-card reveal"><span>04</span><h3>Motion-forward / interactive experiences</h3><p>Scroll, hover, reveal, media, and interaction systems that add personality without getting in the way.</p></article></div><div class="section-action"><a class="button button--ghost" href="services.html">Explore services <span aria-hidden="true">↗</span></a></div></div></section>
+    <section class="why-section section" id="why-sidequest"><div class="shell why-grid"><div class="reveal"><p class="section-kicker">Why SideQuest / 03</p><h2>Custom direction without the agency maze.</h2><p class="hero-lede">You work directly with one person who is thinking about the visual system, the build, the mobile experience, and what the site needs to accomplish.</p></div><div class="why-list" data-reveal-group><article class="reveal"><strong>Custom direction</strong><p>No one-size-fits-all template pasted onto every business.</p></article><article class="reveal"><strong>Mobile-first responsiveness</strong><p>Layouts and interactions built to feel intentional on phones, tablets, and desktops.</p></article><article class="reveal"><strong>Interaction polish</strong><p>Motion and microinteractions that support hierarchy, feedback, and personality.</p></article><article class="reveal"><strong>One person from idea to launch</strong><p>Direct communication from the first conversation through revisions and deployment.</p></article></div></div></section>
+    <section class="process-preview section" id="process-preview"><div class="shell"><div class="section-intro reveal"><div><p class="section-kicker">The process / 04</p><h2>Simple enough to follow.<br>Flexible enough to fit.</h2></div><p>The full Services page goes deeper. The short version is four moves.</p></div><ol class="process-preview-track" data-reveal-group><li class="reveal"><span>01</span><h3>Discover</h3><p>Clarify the business, audience, problem, and most important action.</p></li><li class="reveal"><span>02</span><h3>Design</h3><p>Shape the visual direction, hierarchy, content flow, and interactions.</p></li><li class="reveal"><span>03</span><h3>Build</h3><p>Develop the real site, add motion, and refine it across screen sizes.</p></li><li class="reveal"><span>04</span><h3>Launch</h3><p>Connect the domain, verify the details, and put the finished work live.</p></li></ol><div class="section-action"><a class="button button--ghost" href="services.html#process">See the full process <span aria-hidden="true">↗</span></a></div></div></section>
+    <section class="closing-cta section" id="home-cta"><div class="shell closing-cta__inner reveal"><p class="section-kicker">Have something in mind?</p><h2>Let’s make the website feel as good as the business deserves.</h2><a class="button button--primary" data-magnetic href="about.html#contact">Start a Project <span aria-hidden="true">↗</span></a></div></section>
   </main>
-
-  <footer class="site-footer">
-    <div class="shell footer-grid">
-      <a class="brand" href="#top"><span class="brand-logo-frame" aria-hidden="true"><img class="brand-logo" src="assets/brand/sidequest-logo-v4.webp" alt=""></span><span>SideQuest <strong>Creative</strong></span></a>
-      <p>Custom websites with personality.<br>Designed and built in Louisiana.</p>
-      <div class="footer-links"><a href="#work">Work</a><a href="#capabilities">What I do</a><a href="#process">Process</a><a href="#contact">Contact</a></div>
-      <p class="copyright">© <span id="current-year">2026</span> SideQuest Creative</p>
-    </div>
-  </footer>
+  <footer class="site-footer"><div class="shell footer-grid"><a class="brand" href="index.html"><span class="brand-logo-frame" aria-hidden="true"><img class="brand-logo" src="assets/brand/sidequest-logo-v4.webp" alt=""></span><span>SideQuest <strong>Creative</strong></span></a><p>Custom websites with personality.<br>Designed and built in Louisiana.</p><div class="footer-links"><a href="index.html">Home</a><a href="work.html">Work</a><a href="services.html">Services</a><a href="about.html">About</a><a href="about.html#contact">Start a Project</a></div><p class="copyright">© <span id="current-year">2026</span> SideQuest Creative</p></div></footer>
+  <div class="page-transition" aria-hidden="true"></div>
 </body>
 </html>
