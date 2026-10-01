@@ -80,7 +80,7 @@
         '<a href="https://rivercityrolloffsla.com/" target="_blank" rel="noopener">',
           '<div class="project-browser">',
             '<div class="browser-bar"><span></span><span></span><span></span><small>rivercityrolloffsla.com</small></div>',
-            '<div class="project-media"><img src="https://raw.githubusercontent.com/Teddyjday94/river-city-rolloffs/main/assets/568274538_122108232015036618_1036784660605543071_n.jpg" alt="River City RollOffs truck hauling a roll-off dumpster" loading="lazy"></div>',
+            '<div class="project-media"><img src="assets/projects/river-city-rolloffs.png" alt="River City RollOffs website homepage" loading="lazy"></div>',
             '<div class="project-shade" aria-hidden="true"></div>',
             '<span class="project-index">07</span>',
           '</div>',
@@ -103,11 +103,9 @@
         '.brand-logo{width:36px;height:36px;max-width:none;object-fit:cover;object-position:center center;}',
         '.quest-logo-stage{place-items:center;}',
         '.quest-logo-stage::before,.quest-visual::before,.quest-visual::after{display:none!important;}',
-        '.quest-logo{width:96%;height:96%;margin:auto;object-fit:contain;object-position:center center;transform:none;filter:drop-shadow(0 10px 20px rgba(0,0,0,.28));}',
-        '[data-project="ascension-mow-geaux"] .project-media,[data-project="river-city-rolloffs"] .project-media{background:#0d1015;}',
-        '[data-project="ascension-mow-geaux"] .project-media img,[data-project="river-city-rolloffs"] .project-media img{object-fit:contain;object-position:center center;padding:14px 18px;transform:scale(.96);}',
-        '[data-project="ascension-mow-geaux"]:hover .project-media img,[data-project="river-city-rolloffs"]:hover .project-media img{transform:scale(1);}',
-        '@media (max-width:520px){.quest-logo{width:94%;height:94%;transform:none;}[data-project="ascension-mow-geaux"] .project-media img,[data-project="river-city-rolloffs"] .project-media img{padding:10px 12px;transform:scale(.97);}}'
+        '.quest-logo{display:block!important;width:96%;height:96%;margin:auto;object-fit:contain;object-position:center center;transform:none;filter:drop-shadow(0 10px 20px rgba(0,0,0,.28));}',
+        '[data-project="ascension-mow-geaux"] .project-media img,[data-project="river-city-rolloffs"] .project-media img{object-fit:cover;object-position:center center;padding:0;transform:none;}',
+        '@media (max-width:520px){.quest-logo{display:block!important;width:94%;height:94%;transform:none;}}'
       ].join('');
       document.head.appendChild(logoTune);
     }
