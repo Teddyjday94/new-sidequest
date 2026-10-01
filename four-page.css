@@ -1,2 +1,21 @@
 @import url("four-page-base.css");
 @import url("hq-fixes.css");
+
+/* Approved portfolio screenshot covers */
+.project-card[data-project="quotewake"] .project-media {
+  background: url("assets/projects/quotewake-screenshot.svg") center / cover no-repeat;
+}
+
+.project-card[data-project="guild-os"] .project-media {
+  background: url("assets/projects/guild-os-screenshot.svg") center / cover no-repeat;
+}
+
+.project-card[data-project="resident-evil"] .project-media {
+  background: url("assets/projects/resident-evil-screenshot.svg") center / cover no-repeat;
+}
+
+.project-card[data-project="quotewake"] .project-media > img,
+.project-card[data-project="guild-os"] .project-media > img,
+.project-card[data-project="resident-evil"] .project-media > img {
+  opacity: 0;
+}
