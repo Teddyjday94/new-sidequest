@@ -1,0 +1,46 @@
+/* High-quality portfolio preview + header logo corrections */
+.brand-logo-frame {
+  width: 44px !important;
+  height: 44px !important;
+  flex: 0 0 44px !important;
+  border-radius: 10px;
+  background: #07130f url("assets/brand/sidequest-logo-clean.webp") center / contain no-repeat !important;
+  box-shadow: 0 0 0 1px rgba(185,255,88,.2), 0 0 18px rgba(91,255,185,.10);
+  overflow: hidden;
+}
+.brand-logo {
+  width: 44px !important;
+  height: 44px !important;
+  opacity: 0 !important;
+}
+
+/* These screenshots are 1680×863 (1.947:1). Preserve that shape instead of forcing 16:9/16:10. */
+[data-project="quotewake"] .project-media,
+[data-project="guild-os"] .project-media,
+[data-project="resident-evil"] .project-media {
+  aspect-ratio: 1680 / 863 !important;
+  background: #080a0d;
+}
+[data-project="quotewake"] .project-media img,
+[data-project="guild-os"] .project-media img,
+[data-project="resident-evil"] .project-media img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  padding: 0 !important;
+  transform: none !important;
+  filter: none !important;
+  image-rendering: auto;
+}
+[data-project="quotewake"]:hover .project-media img,
+[data-project="guild-os"]:hover .project-media img,
+[data-project="resident-evil"]:hover .project-media img {
+  transform: none !important;
+  filter: none !important;
+}
+
+@media (max-width: 780px) {
+  .brand-logo-frame { width: 40px !important; height: 40px !important; flex-basis: 40px !important; }
+  .brand-logo { width: 40px !important; height: 40px !important; }
+}
