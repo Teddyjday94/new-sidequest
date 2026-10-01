@@ -22,6 +22,13 @@ test('uses the supplied static screenshots as clean-filling portfolio covers', a
 test('removes the circular hero-logo treatment while keeping the logo centered', () => {
   assert.ok(app.includes('.quest-logo-stage::before,.quest-visual::before,.quest-visual::after{display:none!important;}'));
   assert.ok(app.includes('.quest-logo-stage{place-items:center;}'));
-  assert.ok(app.includes('.quest-logo{display:block!important;width:96%;height:96%;margin:auto;object-fit:contain;object-position:center center;transform:none;'));
+  assert.ok(app.includes('.quest-logo{display:block!important;width:96%;height:96%;margin:auto;'));
+  assert.ok(app.includes('object-fit:contain;object-position:center center;transform:none;'));
   assert.ok(html.includes('<img class="quest-logo" src="assets/brand/sidequest-logo-clean.webp"'));
+});
+
+test('frames the square hero logo with a restrained neon border', () => {
+  assert.ok(app.includes('border:1px solid rgba(174,255,89,.92);'));
+  assert.ok(app.includes('box-shadow:0 0 8px rgba(155,255,68,.58),0 0 22px rgba(92,255,153,.22);'));
+  assert.ok(app.includes('border-radius:6px;'));
 });

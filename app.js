@@ -103,7 +103,7 @@
         '.brand-logo{width:36px;height:36px;max-width:none;object-fit:cover;object-position:center center;}',
         '.quest-logo-stage{place-items:center;}',
         '.quest-logo-stage::before,.quest-visual::before,.quest-visual::after{display:none!important;}',
-        '.quest-logo{display:block!important;width:96%;height:96%;margin:auto;object-fit:contain;object-position:center center;transform:none;filter:drop-shadow(0 10px 20px rgba(0,0,0,.28));}',
+        '.quest-logo{display:block!important;width:96%;height:96%;margin:auto;box-sizing:border-box;object-fit:contain;object-position:center center;transform:none;border:1px solid rgba(174,255,89,.92);border-radius:6px;box-shadow:0 0 8px rgba(155,255,68,.58),0 0 22px rgba(92,255,153,.22);filter:drop-shadow(0 10px 20px rgba(0,0,0,.28));}',
         '[data-project="ascension-mow-geaux"] .project-media img,[data-project="river-city-rolloffs"] .project-media img{object-fit:cover;object-position:center center;padding:0;transform:none;}',
         '@media (max-width:520px){.quest-logo{display:block!important;width:94%;height:94%;transform:none;}}'
       ].join('');
