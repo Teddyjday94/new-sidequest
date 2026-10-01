@@ -7,6 +7,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     initMenu();
     initHeader();
+    initPortfolioUpdates();
     initReveals();
     initPointerGlow();
     initProjectTilt();
@@ -53,6 +54,57 @@
 
     update();
     window.addEventListener('scroll', update, { passive: true });
+  }
+
+  function initPortfolioUpdates() {
+    var proofCount = document.querySelector('.hero-proof > div:first-child strong');
+    if (proofCount) proofCount.textContent = '07';
+
+    var mowLink = document.querySelector('.project-grid--clients a[href*="ascensionmowngeaux"]');
+    if (mowLink) {
+      mowLink.href = 'https://ascensionmowngeaux.com/';
+      var mowDomain = mowLink.querySelector('.browser-bar small');
+      if (mowDomain) mowDomain.textContent = 'ascensionmowngeaux.com';
+    }
+
+    var grid = document.querySelector('.project-grid--clients');
+    if (grid && !grid.querySelector('[data-project="river-city-rolloffs"]')) {
+      var article = document.createElement('article');
+      article.className = 'project-card project-card--feature reveal';
+      article.setAttribute('data-tilt', '');
+      article.setAttribute('data-project', 'river-city-rolloffs');
+      article.style.gridColumn = '1 / -1';
+      article.innerHTML = [
+        '<a href="https://rivercityrolloffsla.com/" target="_blank" rel="noopener">',
+          '<div class="project-browser">',
+            '<div class="browser-bar"><span></span><span></span><span></span><small>rivercityrolloffsla.com</small></div>',
+            '<div class="project-media"><img src="https://raw.githubusercontent.com/Teddyjday94/river-city-rolloffs/main/assets/568274538_122108232015036618_1036784660605543071_n.jpg" alt="River City RollOffs truck hauling a roll-off dumpster" loading="lazy"></div>',
+            '<div class="project-shade" aria-hidden="true"></div>',
+            '<span class="project-index">07</span>',
+          '</div>',
+          '<div class="project-body">',
+            '<div><p class="project-type">Dumpster rentals / Local service</p><h3>River City RollOffs</h3></div>',
+            '<p>A bold local-service site built around fast rental requests, clear service areas, real jobsite proof, and direct call-or-text paths that make booking a dumpster simple.</p>',
+            '<div class="project-tags"><span>Multi-page</span><span>Lead generation</span><span>Local SEO</span></div>',
+            '<span class="project-link">View live site <b aria-hidden="true">↗</b></span>',
+          '</div>',
+        '</a>'
+      ].join('');
+      grid.appendChild(article);
+    }
+
+    if (!document.getElementById('logo-centering-tune')) {
+      var logoTune = document.createElement('style');
+      logoTune.id = 'logo-centering-tune';
+      logoTune.textContent = [
+        '.brand-logo-frame{place-items:center;width:36px;height:36px;flex-basis:36px;}',
+        '.brand-logo{width:36px;height:36px;max-width:none;object-fit:cover;object-position:center center;}',
+        '.quest-logo-stage{place-items:center;}',
+        '.quest-logo{width:94%;height:94%;margin:auto;object-fit:contain;object-position:center center;transform:translateY(-2px);}',
+        '@media (max-width:520px){.quest-logo{width:93%;height:93%;transform:translateY(-1px);}}'
+      ].join('');
+      document.head.appendChild(logoTune);
+    }
   }
 
   function initReveals() {
