@@ -518,13 +518,13 @@ img { display: block; width: 100%; max-width: 100%; }
   isolation: isolate;
 }
 
-/* legacy ring markup from an earlier version — no longer part of the design */
+/* legacy ring markup from an earlier version, no longer part of the design */
 .quest-aura,
 .quest-glint {
   display: none;
 }
 
-/* wide, soft ambient wash — a light source, not a drawn circle */
+/* wide, soft ambient wash, a light source, not a drawn circle */
 .quest-visual::before {
   content: "";
   position: absolute;
@@ -543,7 +543,7 @@ img { display: block; width: 100%; max-width: 100%; }
   animation: quest-ambient-pulse 10s ease-in-out infinite;
 }
 
-/* second, larger wash for depth — same soft falloff, no ring band */
+/* second, larger wash for depth, same soft falloff, no ring band */
 .quest-visual::after {
   content: "";
   position: absolute;
@@ -573,7 +573,7 @@ img { display: block; width: 100%; max-width: 100%; }
   animation: quest-logo-float 9s ease-in-out infinite;
 }
 
-/* the actual edge glow — a slim, brighter rim hugging the logo's own boundary */
+/* the actual edge glow, a slim, brighter rim hugging the logo's own boundary */
 .quest-logo-stage::before {
   content: "";
   position: absolute;
@@ -651,20 +651,3 @@ img { display: block; width: 100%; max-width: 100%; }
   }
 }
 
-
-/* --- Static hero logo: no motion --- */
-.quest-logo-stage,
-.quest-logo,
-.quest-visual::before,
-.quest-visual::after {
-  animation: none !important;
-}
-
-.quest-logo-stage {
-  transform: none !important;
-}
-
-.quest-visual::before,
-.quest-visual::after {
-  transform: translate(-50%, -50%) !important;
-}

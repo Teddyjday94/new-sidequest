@@ -14,6 +14,231 @@
   opacity: 0 !important;
 }
 
+/* Animated emerald brand orb */
+.quest-visual {
+  height: 300px;
+  perspective: 900px;
+}
+
+.quest-orbit {
+  position: absolute;
+  z-index: 1;
+  width: 276px;
+  height: 276px;
+  border: 1px solid rgba(96, 255, 157, .36);
+  border-radius: 50%;
+  box-shadow: 0 0 14px rgba(60, 255, 139, .1), inset 0 0 12px rgba(60, 255, 139, .06);
+  pointer-events: none;
+  transform-style: preserve-3d;
+}
+
+.quest-orbit--outer {
+  transform: rotateX(68deg) rotateZ(-20deg);
+  animation: quest-orbit-turn 28s linear infinite;
+}
+
+.quest-orbit--inner {
+  width: 230px;
+  height: 230px;
+  border-color: rgba(185, 255, 132, .22);
+  border-style: dashed;
+  box-shadow: 0 0 18px rgba(60, 255, 139, .12);
+  transform: rotateX(68deg) rotateZ(24deg);
+  animation: quest-orbit-turn-reverse 34s linear infinite;
+}
+
+.quest-logo-stage {
+  z-index: 2;
+  width: 250px;
+  height: 250px;
+  transform-style: preserve-3d;
+  animation: quest-orb-float 8s ease-in-out infinite;
+}
+
+.quest-orb-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  border-radius: 50%;
+  object-fit: cover;
+  mix-blend-mode: multiply;
+  filter: saturate(1.1) contrast(1.08) drop-shadow(0 0 28px rgba(52, 255, 150, .2));
+  mask-image: radial-gradient(circle, #000 0 88%, transparent 99%);
+  opacity: .16;
+  transition: opacity .35s ease;
+}
+
+/* The canvas bleeds past the stage so the glass bloom has room to fade out. */
+.quest-orb-canvas {
+  position: absolute;
+  z-index: 1;
+  inset: -28%;
+  width: 156%;
+  height: 156%;
+  max-width: none;
+  opacity: 0;
+  transition: opacity .6s ease;
+  pointer-events: none;
+}
+
+.quest-logo-stage[data-orb-mode="webgl"] .quest-orb-art {
+  opacity: 0;
+}
+
+.quest-logo-stage[data-orb-mode="webgl"] .quest-orb-canvas {
+  opacity: 1;
+}
+
+/* Let the bloom fade into the panel instead of stopping at a hard clip edge. */
+.quest-visual:has([data-orb-mode="webgl"]) {
+  overflow: visible;
+}
+
+/* In WebGL mode the glass orb carries the scene; the flat rings would compete with it. */
+.quest-visual:has([data-orb-mode="webgl"]) .quest-orbit,
+.quest-visual:has([data-orb-mode="webgl"]) .quest-orbit-node {
+  opacity: 0;
+  animation: none;
+}
+
+/* The bubble has no glossy highlight; the shader's film ring does that job. */
+.quest-logo-stage[data-orb-mode="webgl"] .quest-orb-light {
+  display: none;
+}
+
+.quest-logo-stage[data-orb-mode="webgl"] .quest-logo {
+  width: 104px !important;
+  height: 104px !important;
+  opacity: .96;
+  /* Contrast crushes the logo's dark tile to pure black so the screen blend drops it entirely. */
+  filter: contrast(1.32) brightness(1.04) drop-shadow(0 0 10px rgba(120, 255, 180, .3));
+  animation: quest-logo-drift 11s ease-in-out infinite;
+}
+
+/* Once the shader has the logo texture it draws the 3D version itself. */
+.quest-logo-stage[data-logo-mode="webgl"] .quest-logo {
+  opacity: 0;
+  animation: none;
+}
+
+@keyframes quest-logo-drift {
+  0%, 100% { transform: translate(-50%, -50%) rotate(-3deg) scale(.98); }
+  50% { transform: translate(-50%, -52%) rotate(3deg) scale(1.02); }
+}
+
+.quest-orb-light {
+  position: absolute;
+  inset: 8%;
+  z-index: 1;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 35% 24%, rgba(255, 255, 225, .58), rgba(169, 255, 203, .13) 22%, transparent 58%);
+  filter: blur(5px);
+  mix-blend-mode: screen;
+  opacity: .62;
+  pointer-events: none;
+  animation: quest-orb-glow 7s ease-in-out infinite;
+}
+
+.quest-logo {
+  position: absolute;
+  z-index: 2;
+  inset: 50% auto auto 50%;
+  width: 116px !important;
+  height: 116px !important;
+  max-width: none;
+  margin: 0;
+  border: 0 !important;
+  border-radius: 50%;
+  object-fit: contain;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: screen;
+  opacity: .92;
+  filter: drop-shadow(0 3px 12px rgba(3, 18, 11, .55)) drop-shadow(0 0 12px rgba(156, 255, 184, .28));
+  mask-image: radial-gradient(circle, #000 0 67%, rgba(0, 0, 0, .88) 74%, transparent 84%);
+}
+
+.quest-orbit-node {
+  position: absolute;
+  z-index: 3;
+  width: 7px;
+  height: 7px;
+  border: 1px solid rgba(211, 255, 207, .9);
+  border-radius: 50%;
+  background: #9cffb5;
+  box-shadow: 0 0 14px rgba(111, 255, 157, .8);
+  pointer-events: none;
+}
+
+.quest-orbit-node--one {
+  top: 31px;
+  right: calc(50% - 123px);
+  animation: quest-node-pulse 3.4s ease-in-out infinite;
+}
+
+.quest-orbit-node--two {
+  bottom: 36px;
+  left: calc(50% - 127px);
+  width: 4px;
+  height: 4px;
+  opacity: .7;
+  animation: quest-node-pulse 4.2s ease-in-out infinite reverse;
+}
+
+@keyframes quest-orbit-turn {
+  to { transform: rotateX(68deg) rotateZ(340deg); }
+}
+
+@keyframes quest-orbit-turn-reverse {
+  to { transform: rotateX(68deg) rotateZ(-336deg); }
+}
+
+@keyframes quest-orb-turn {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes quest-orb-float {
+  0%, 100% { transform: translateY(3px); }
+  50% { transform: translateY(-7px); }
+}
+
+@keyframes quest-orb-glow {
+  0%, 100% { opacity: .48; transform: scale(.96); }
+  50% { opacity: .78; transform: scale(1.04); }
+}
+
+@keyframes quest-node-pulse {
+  0%, 100% { opacity: .48; transform: scale(.82); }
+  50% { opacity: 1; transform: scale(1.18); }
+}
+
+@media (max-width: 780px) {
+  .quest-orbit { width: 258px; height: 258px; }
+  .quest-orbit--inner { width: 214px; height: 214px; }
+  .quest-logo-stage { width: 232px; height: 232px; }
+}
+
+@media (max-width: 520px) {
+  .quest-visual { height: 240px; }
+  .quest-orbit { width: 218px; height: 218px; }
+  .quest-orbit--inner { width: 184px; height: 184px; }
+  .quest-logo-stage { width: 202px; height: 202px; }
+  .quest-logo { width: 102px !important; height: 102px !important; }
+  .quest-orbit-node--one { top: 23px; right: calc(50% - 98px); }
+  .quest-orbit-node--two { bottom: 28px; left: calc(50% - 101px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quest-orbit,
+  .quest-logo-stage,
+  .quest-orb-light,
+  .quest-logo-stage .quest-logo,
+  .quest-orbit-node {
+    animation: none !important;
+  }
+}
+
 /* These screenshots are 1680×863 (1.947:1). Preserve that shape instead of forcing 16:9/16:10. */
 [data-project="quotewake"] .project-media,
 [data-project="guild-os"] .project-media,

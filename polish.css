@@ -1,0 +1,749 @@
+/* Visual + motion pass. Loads last; the hero orb rules in hq-fixes.css are left alone. */
+
+:root {
+  --sans: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display: "Syne", var(--sans);
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --emerald: #3dffa8;
+  --ink-tint: #0a0e0c;
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --ease-spring: cubic-bezier(.34, 1.4, .64, 1);
+  interpolate-size: allow-keywords;
+}
+
+body {
+  font-family: var(--sans);
+}
+
+h1, h2, h3, .page-stat {
+  font-family: var(--display);
+  font-optical-sizing: auto;
+  text-wrap: balance;
+}
+
+p { text-wrap: pretty; }
+
+/* Accent words stay in the headline face, picked out in lime. */
+h1 em, h2 em {
+  font-style: normal;
+}
+
+/* ---------- Surfaces ---------- */
+
+/* Single accent: the stray violet glow becomes emerald, matching the orb. */
+.hero::before {
+  background:
+    radial-gradient(ellipse 60% 50% at 74% 30%, rgba(185, 255, 88, .1), transparent 70%),
+    radial-gradient(ellipse 40% 40% at 96% 78%, rgba(61, 255, 168, .07), transparent 70%),
+    linear-gradient(180deg, #080a0d 0%, var(--ink-tint) 100%);
+}
+
+/* Film grain over everything, so the dark surfaces stop reading as flat vectors. */
+body::after {
+  content: "";
+  position: fixed;
+  z-index: 95;
+  inset: -50%;
+  pointer-events: none;
+  opacity: .06;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 1.2s steps(6) infinite;
+}
+
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-3%, 2%); }
+  40% { transform: translate(2%, -3%); }
+  60% { transform: translate(-2%, -1%); }
+  80% { transform: translate(3%, 3%); }
+}
+
+/* ---------- Typography ---------- */
+
+/* Syne runs wide, so the hero is sized to fit "personality." on one line in its column. */
+.hero h1 {
+  font-size: clamp(2.4rem, 4.7vw, 5rem);
+  font-weight: 700;
+  line-height: .98;
+  letter-spacing: -.035em;
+}
+
+@media (max-width: 780px) {
+  .hero h1 { font-size: clamp(2.3rem, 10vw, 4.4rem); }
+}
+
+.page-hero h1 {
+  font-weight: 750;
+  letter-spacing: -.05em;
+}
+
+.section-intro h2, .process-heading h2, .contact-copy h2,
+.process-story__intro h2, .closing-cta__inner h2, .why-grid h2 {
+  font-weight: 720;
+  letter-spacing: -.035em;
+}
+
+/* This heading never had a size, so it fell back to the browser default. */
+.why-grid h2 {
+  margin: 0;
+  font-size: clamp(2.6rem, 4.6vw, 4.6rem);
+  line-height: .96;
+}
+
+.why-grid .hero-lede { margin-top: 26px; }
+
+.project-body h3, .service-preview-card h3, .service-card h3,
+.capability-matrix h3, .process-preview-track h3, .service-process__steps h3 {
+  font-weight: 650;
+  letter-spacing: -.035em;
+}
+
+.quest-panel__copy h2 { font-weight: 720; letter-spacing: -.035em; }
+
+.hero-lede { max-width: 58ch; color: #c9cec6; }
+.section-intro > p, .about-copy, .service-card p, .project-body > p { max-width: 62ch; }
+
+.hero-proof strong, .page-stat, .service-preview-card > span:not(.neon-trace),
+.process-preview-track > li > span, .service-card > span:not(.neon-trace), .capability-matrix span:not(.neon-trace) {
+  font-variant-numeric: tabular-nums;
+}
+
+.page-stat { font-weight: 800; }
+
+/* Kicker labels draw a short rule in before the text. */
+.section-kicker, .mini-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-kicker::before, .mini-label::before {
+  content: "";
+  width: 22px;
+  height: 1px;
+  flex: none;
+  background: currentColor;
+  transform-origin: left;
+  transition: transform .9s var(--ease-out) .15s;
+}
+
+.js .reveal:not(.is-visible) .section-kicker::before,
+.js .reveal.section-kicker:not(.is-visible)::before {
+  transform: scaleX(0);
+}
+
+/* ---------- Split-word headline reveals (words wrapped by app.js) ---------- */
+
+.split .word {
+  display: inline-block;
+  overflow: hidden;
+  padding-bottom: .1em;
+  margin-bottom: -.1em;
+  vertical-align: top;
+}
+
+.split .word-inner {
+  display: inline-block;
+  transform: translateY(108%) rotate(3deg);
+  transform-origin: left bottom;
+  transition: transform 1s var(--ease-out);
+  transition-delay: calc(var(--w, 0) * 45ms + 80ms);
+}
+
+.is-visible .split .word-inner,
+.split.is-visible .word-inner {
+  transform: none;
+}
+
+/* The hero lines used to slide as whole lines; words take over that job now. */
+.split .reveal-line {
+  transform: none;
+  opacity: 1;
+  transition: none;
+}
+
+/* ---------- Header + navigation ---------- */
+
+.site-header {
+  transition: background .3s ease, border-color .3s ease, transform .5s var(--ease-out);
+  animation: header-in .9s var(--ease-out) both;
+}
+
+.site-header.is-hidden { transform: translateY(-100%); }
+
+@keyframes header-in {
+  from { transform: translateY(-100%); }
+}
+
+.nav-links > a:not(.nav-cta) {
+  position: relative;
+  padding: 6px 0;
+}
+
+.nav-links > a:not(.nav-cta)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--acid);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform .45s var(--ease-out);
+}
+
+.nav-links > a:not(.nav-cta):hover::before {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.nav-links > a[aria-current="page"]::after { display: none; }
+.nav-links > a[aria-current="page"]::before { transform: scaleX(1); }
+
+.brand-logo-frame { transition: transform .6s var(--ease-spring), box-shadow .3s ease; }
+.brand:hover .brand-logo-frame {
+  transform: rotate(-8deg) scale(1.06);
+  box-shadow: 0 0 0 1px rgba(185, 255, 88, .45), 0 0 22px rgba(91, 255, 185, .25);
+}
+
+/* ---------- Buttons ---------- */
+
+.button, .nav-cta {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    transform .45s var(--ease-spring),
+    background .25s ease,
+    border-color .25s ease,
+    color .25s ease,
+    box-shadow .3s ease;
+}
+
+.button > span, .nav-cta > span {
+  display: inline-block;
+  transition: transform .45s var(--ease-spring);
+}
+
+.button:hover > span, .nav-cta:hover > span { transform: translate(3px, -3px) rotate(8deg); }
+
+/* A light sweep across the filled button on hover. */
+.button--primary::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, .55) 48%, transparent 66%);
+  transform: translateX(-120%);
+  transition: transform .8s var(--ease-out);
+}
+
+.button--primary:hover::after { transform: translateX(120%); }
+
+.button--primary:hover {
+  background: #c6ff74;
+  box-shadow: 0 10px 34px -10px rgba(185, 255, 88, .6);
+}
+
+.button--ghost {
+  background: rgba(244, 241, 232, .02);
+  backdrop-filter: blur(8px);
+}
+
+.button--ghost:hover { background: rgba(244, 241, 232, .07); }
+
+.button[data-magnetic]:hover,
+.nav-cta[data-magnetic]:hover {
+  transform: translate(var(--mag-x, 0), calc(var(--mag-y, 0px) - 2px));
+}
+
+.button:active, .nav-cta:active, .work-filter-bar button:active {
+  transform: translate(var(--mag-x, 0), var(--mag-y, 0)) scale(.97);
+  transition-duration: .1s;
+}
+
+/* ---------- Spotlight surfaces (class added by app.js) ---------- */
+
+.spotlight {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Border that lights up under the cursor. */
+.spotlight::before {
+  content: "";
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(240px circle at var(--sx, 50%) var(--sy, 50%), rgba(185, 255, 88, .75), rgba(61, 255, 168, .25) 40%, transparent 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity .4s ease;
+}
+
+/* Soft wash of light inside the card. */
+.spotlight::after {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(420px circle at var(--sx, 50%) var(--sy, 50%), rgba(185, 255, 88, .07), transparent 60%);
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity .4s ease;
+}
+
+.spotlight:hover::before, .spotlight:hover::after { opacity: 1; }
+
+/* ---------- Cards ---------- */
+
+/*
+  Revealed cards are handed back to their own interaction once the entrance ends
+  (app.js adds .reveal-done). Until then .js .reveal owns opacity/transform; after,
+  hover and tilt respond immediately instead of inheriting the stagger delay.
+*/
+.js .reveal.reveal-done {
+  transition:
+    opacity .7s ease,
+    transform .6s var(--ease-spring),
+    background .35s ease,
+    border-color .35s ease,
+    box-shadow .35s ease;
+  transition-delay: 0s;
+}
+
+.js .service-preview-card.reveal-done:hover,
+.js .service-card.reveal-done:hover {
+  transform: translateY(-6px);
+}
+
+/* Project cards keep their cursor tilt and hover lift after revealing. */
+.js .project-card.reveal-done {
+  transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(var(--lift, 0px));
+  transition: transform .25s ease, background .25s ease, border-color .25s ease, box-shadow .35s ease, clip-path .8s var(--ease-out);
+}
+
+.service-preview-card:hover, .service-card:hover {
+  background: linear-gradient(160deg, rgba(185, 255, 88, .045), transparent 55%), var(--panel-2);
+}
+
+/* Number badges. Scoped so the neon trace layer (also a direct span) is left alone. */
+.service-preview-card > span:not(.neon-trace),
+.service-card > span:not(.neon-trace) {
+  display: inline-grid;
+  min-width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid rgba(185, 255, 88, .3);
+  border-radius: 10px;
+  transition: background .3s ease, color .3s ease, transform .6s var(--ease-spring);
+}
+
+.service-preview-card:hover > span:not(.neon-trace),
+.service-card:hover > span:not(.neon-trace) {
+  background: var(--acid);
+  color: var(--ink);
+  transform: rotate(-6deg);
+}
+
+.service-preview-card h3, .service-card h3 { transition: transform .6s var(--ease-out); }
+.service-preview-card:hover h3, .service-card:hover h3 { transform: translateX(4px); }
+
+.why-list article:hover, .capability-matrix article:hover, .fit-grid article:hover {
+  background: rgba(185, 255, 88, .025);
+}
+
+.why-list article { padding-inline: 14px; margin-inline: -14px; border-radius: 14px; }
+
+/* Project cards: images settle from a slight zoom as the card reveals. */
+.project-card { box-shadow: 0 30px 60px -30px rgba(0, 10, 4, .6); }
+.project-card:hover { box-shadow: 0 40px 80px -30px rgba(0, 20, 8, .75); }
+.image-reveal .project-media img { scale: 1.14; transition: scale 1.6s var(--ease-out), transform .7s var(--ease-out), filter .3s ease; }
+.image-reveal.is-visible .project-media img { scale: 1; }
+.project-index { transition: transform .6s var(--ease-spring), background .3s ease, color .3s ease; }
+.project-card:hover .project-index { transform: rotate(-12deg) scale(1.08); background: var(--acid); color: var(--ink); }
+
+/* Home process: each step's top rule draws in. */
+.process-preview-track { border-top-color: transparent; }
+.process-preview-track li { position: relative; }
+.process-preview-track li::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--acid), rgba(185, 255, 88, .15));
+  transform-origin: left;
+  transition: transform 1.1s var(--ease-out);
+  transition-delay: calc(var(--reveal-index, 0) * 120ms + 150ms);
+}
+
+.js .process-preview-track li.reveal:not(.is-visible)::before { transform: scaleX(0); }
+
+/* ---------- Work filter: a pill that slides to the active filter ---------- */
+
+.work-filter-bar.has-indicator button[aria-pressed="true"] { background: transparent; }
+.work-filter-bar button { position: relative; z-index: 1; }
+
+.filter-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 999px;
+  background: var(--acid);
+  box-shadow: 0 6px 24px -8px rgba(185, 255, 88, .6);
+  pointer-events: none;
+  transition: transform .55s var(--ease-spring), width .55s var(--ease-spring), height .3s ease;
+}
+
+.project-card.is-entering { animation: card-in .7s var(--ease-out) both; animation-delay: calc(var(--enter-index, 0) * 60ms); }
+
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(24px) scale(.98); }
+}
+
+/* ---------- FAQ: smooth open ---------- */
+
+.faq-list summary { transition: color .25s ease; }
+.faq-list summary:hover { color: var(--acid); }
+.faq-list summary::after,
+.faq-list details[open] summary::after {
+  content: "+";
+  font-size: 1.3rem;
+  line-height: 1;
+  transition: transform .5s var(--ease-spring);
+}
+.faq-list details[open] summary::after { transform: rotate(45deg); }
+
+.faq-list details::details-content {
+  height: 0;
+  overflow: clip;
+  transition: height .5s var(--ease-out), content-visibility .5s allow-discrete;
+}
+
+.faq-list details[open]::details-content { height: auto; }
+
+/* ---------- Closing CTA ---------- */
+
+.closing-cta__inner {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 50% 70% at 85% 10%, rgba(185, 255, 88, .14), transparent 70%),
+    radial-gradient(ellipse 40% 60% at 5% 100%, rgba(61, 255, 168, .08), transparent 70%),
+    var(--panel);
+}
+
+.closing-cta__inner h2 { font-size: clamp(2.6rem, 5.4vw, 5.4rem); }
+
+/* ---------- Marquee ---------- */
+
+.hero-marquee > div { font-family: var(--mono); }
+.hero-marquee b { display: inline-block; animation: spin-star 6s linear infinite; }
+
+@keyframes spin-star { to { transform: rotate(1turn); } }
+
+/* ---------- Footer wordmark: "SideQuest" filled, "Creative" as a neon tube ---------- */
+
+.site-footer { position: relative; overflow: hidden; }
+
+/* app.js scales each line so "SideQuest" spans the content width exactly. */
+.footer-wordmark {
+  width: min(calc(100% - 48px), var(--max));
+  margin: 56px auto 0;
+  font-family: var(--display);
+  line-height: .9;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.wm-line { display: block; }
+
+.wm-line--main {
+  overflow: hidden;
+  padding-bottom: .06em;
+  font-size: 12vw;
+  font-weight: 800;
+  letter-spacing: -.04em;
+}
+
+.wm-line--sub {
+  position: relative;
+  margin-top: -.08em;
+  text-align: right;
+  font-size: 7vw;
+  font-weight: 700;
+  letter-spacing: .01em;
+}
+
+/* "SideQuest" letters rise out of the baseline, then fill from outline to colour. */
+.wm-line--main .wm-letter {
+  display: inline-block;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(244, 241, 232, .18);
+  transform: translateY(105%);
+  transition:
+    transform 1.1s var(--ease-out) calc(var(--i, 0) * 55ms),
+    color .7s ease calc(var(--i, 0) * 70ms + 650ms),
+    -webkit-text-stroke-color .7s ease calc(var(--i, 0) * 70ms + 650ms);
+}
+
+.footer-wordmark.is-visible .wm-line--main .wm-letter {
+  transform: none;
+  color: color-mix(in oklab, var(--acid), var(--emerald) calc(var(--p, 0) * 100%));
+  -webkit-text-stroke-color: transparent;
+}
+
+/* "Creative" is an unlit glass tube until the reveal, then each letter flickers on. */
+.wm-line--sub .wm-letter {
+  display: inline-block;
+  color: rgba(234, 255, 200, .06);
+  -webkit-text-stroke: 1px rgba(185, 255, 88, .22);
+}
+
+.footer-wordmark.is-visible .wm-line--sub .wm-letter {
+  animation: tube-on 1.3s steps(1, end) both;
+  animation-delay: calc(var(--j, 0) * 90ms + 1.1s);
+}
+
+/* A spark that spins in front of "Creative" once the sign is lit. */
+.wm-line--sub::before {
+  content: "\2726";
+  display: inline-block;
+  margin-right: .25em;
+  color: var(--acid);
+  font-size: .5em;
+  vertical-align: .55em;
+  opacity: 0;
+  text-shadow: 0 0 10px rgba(185, 255, 88, .9), 0 0 28px rgba(185, 255, 88, .5);
+  transform: scale(.4) rotate(-90deg);
+  transition: opacity .4s ease 1s, transform .9s var(--ease-spring) 1s;
+}
+
+.footer-wordmark.is-visible .wm-line--sub::before {
+  opacity: 1;
+  transform: none;
+  animation: spin-star 7s linear 2s infinite;
+}
+
+@keyframes tube-on {
+  0%, 9%, 15%, 34% {
+    color: rgba(234, 255, 200, .06);
+    -webkit-text-stroke-color: rgba(185, 255, 88, .22);
+    text-shadow: none;
+  }
+  6%, 12%, 22%, 40%, 100% {
+    color: #efffd6;
+    -webkit-text-stroke-color: transparent;
+    text-shadow:
+      0 0 4px rgba(239, 255, 214, .9),
+      0 0 14px rgba(185, 255, 88, .85),
+      0 0 34px rgba(185, 255, 88, .55),
+      0 0 70px rgba(61, 255, 168, .35);
+  }
+}
+
+/* ---------- Neon pass ---------- */
+
+@property --trace {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+/* Page enter: a scan line sweeps down while the new page wipes in behind it. */
+body::before {
+  content: "";
+  position: fixed;
+  z-index: 130;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--acid) 18%, #f4ffe2 50%, var(--emerald) 82%, transparent);
+  box-shadow: 0 0 12px rgba(185, 255, 88, .9), 0 0 38px rgba(185, 255, 88, .55), 0 0 90px rgba(61, 255, 168, .3);
+  opacity: 0;
+  animation: scan-sweep .85s cubic-bezier(.65, 0, .35, 1) .05s both;
+}
+
+@keyframes scan-sweep {
+  0% { opacity: 1; transform: translateY(0); }
+  85% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(100vh); }
+}
+
+::view-transition-old(root) { animation: neon-page-out .45s ease both; }
+::view-transition-new(root) { animation: neon-page-in .85s cubic-bezier(.65, 0, .35, 1) .05s both; }
+
+@keyframes neon-page-out {
+  to { opacity: 0; filter: brightness(.4) saturate(.6); }
+}
+
+@keyframes neon-page-in {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+/* Cards and panels: a light traces once around the border as they reveal. */
+.neon-trace {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  padding: 1.5px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: conic-gradient(from var(--trace), transparent 0deg 250deg, rgba(185, 255, 88, .85) 325deg, #f4ffe2 352deg, transparent 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  filter: drop-shadow(0 0 6px rgba(185, 255, 88, .8));
+  opacity: 0;
+}
+
+.is-visible > .neon-trace {
+  animation: neon-trace 1.7s var(--ease-out) both;
+  animation-delay: calc(var(--reveal-index, 0) * 90ms + .25s);
+}
+
+@keyframes neon-trace {
+  0% { opacity: 0; --trace: 0deg; }
+  12% { opacity: 1; }
+  75% { opacity: 1; }
+  100% { opacity: 0; --trace: 360deg; }
+}
+
+/* Headlines: each word flares as it lands, like a tube catching. */
+.is-visible .split .word-inner,
+.split.is-visible .word-inner {
+  animation: word-ignite 1.1s ease-out both;
+  animation-delay: calc(var(--w, 0) * 45ms + 380ms);
+}
+
+@keyframes word-ignite {
+  0% { text-shadow: none; }
+  18% { text-shadow: 0 0 10px rgba(185, 255, 88, .7), 0 0 30px rgba(185, 255, 88, .35); }
+  24% { text-shadow: none; }
+  32% { text-shadow: 0 0 8px rgba(185, 255, 88, .55), 0 0 24px rgba(185, 255, 88, .25); }
+  100% { text-shadow: none; }
+}
+
+/* The lime accent word keeps a steady low glow once lit. */
+.hero h1 em {
+  text-shadow: 0 0 18px rgba(185, 255, 88, .35), 0 0 46px rgba(185, 255, 88, .15);
+}
+
+/* Section labels flicker on as their block reveals. */
+.reveal.is-visible .section-kicker,
+.reveal.is-visible .mini-label,
+.reveal.is-visible .eyebrow {
+  animation: label-flicker 1s steps(1, end) .2s both;
+}
+
+@keyframes label-flicker {
+  0%, 12%, 26% { opacity: .15; text-shadow: none; }
+  8%, 18%, 40%, 100% { opacity: 1; text-shadow: 0 0 10px rgba(185, 255, 88, .45); }
+}
+
+/* Glow on the interactive bits. */
+.button--primary:hover {
+  box-shadow: 0 0 0 1px rgba(185, 255, 88, .9), 0 0 22px rgba(185, 255, 88, .55), 0 0 60px rgba(185, 255, 88, .25);
+}
+
+.button--ghost:hover, .nav-cta:hover {
+  border-color: var(--acid);
+  box-shadow: 0 0 18px rgba(185, 255, 88, .3), inset 0 0 12px rgba(185, 255, 88, .12);
+}
+
+.button--ghost:hover { color: #efffd6; text-shadow: 0 0 10px rgba(185, 255, 88, .6); }
+
+.nav-links > a:not(.nav-cta)::before { box-shadow: 0 0 8px rgba(185, 255, 88, .9); }
+.nav-links > a:not(.nav-cta):hover { text-shadow: 0 0 12px rgba(185, 255, 88, .5); }
+
+.scroll-progress span { box-shadow: 0 0 10px rgba(185, 255, 88, .9), 0 0 24px rgba(185, 255, 88, .4); }
+.process-rail span { box-shadow: 0 0 10px rgba(185, 255, 88, .8); }
+.hero-marquee b { text-shadow: 0 0 10px rgba(185, 255, 88, .8); }
+.live-dot::before { animation: live-pulse 2.4s ease-in-out infinite; }
+
+@keyframes live-pulse {
+  0%, 100% { box-shadow: 0 0 6px currentColor; }
+  50% { box-shadow: 0 0 14px currentColor, 0 0 28px currentColor; }
+}
+
+/* ---------- Cursor light: a smaller, softer glow that trails the pointer ---------- */
+
+.cursor-glow {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(185, 255, 88, .065), transparent 66%);
+}
+
+/* ---------- Featured work: a quieter type scale so the screenshots lead ---------- */
+
+.work-section .section-intro h2 { font-size: clamp(2.4rem, 4.4vw, 4.2rem); }
+.work-section .project-body h3 { font-size: clamp(1.4rem, 2.1vw, 2rem); }
+.work-section .project-body > p { font-size: .86rem; }
+
+/* ---------- Mobile menu: fade and stagger instead of popping in ---------- */
+
+@media (max-width: 780px) {
+  .nav-links {
+    display: flex;
+    /* Solid, not translucent: the hero headline otherwise ghosts through the open menu. */
+    background: #080a0d;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity .35s ease, transform .5s var(--ease-out), visibility 0s linear .5s;
+  }
+
+  .nav-links.is-open {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    transition: opacity .35s ease, transform .5s var(--ease-out), visibility 0s;
+  }
+
+  .nav-links > a {
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity .4s ease, transform .5s var(--ease-out);
+  }
+
+  .nav-links.is-open > a { opacity: 1; transform: none; }
+  .nav-links.is-open > a:nth-child(2) { transition-delay: .04s; }
+  .nav-links.is-open > a:nth-child(3) { transition-delay: .08s; }
+  .nav-links.is-open > a:nth-child(4) { transition-delay: .12s; }
+  .nav-links.is-open > a:nth-child(5) { transition-delay: .16s; }
+
+  .nav-links > a:not(.nav-cta)::before { display: none; }
+  .footer-wordmark { margin-top: 40px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::after { animation: none; }
+  .site-header { animation: none; }
+  .split .word-inner { transform: none !important; }
+  .image-reveal .project-media img { scale: 1; }
+  .wm-letter { transform: none; transition: none; }
+  body::before, .neon-trace { display: none; }
+  .split .word-inner, .reveal .section-kicker, .reveal .mini-label, .reveal .eyebrow { animation: none !important; }
+  .footer-wordmark.is-visible .wm-line--sub .wm-letter {
+    animation: none;
+    color: #efffd6;
+    -webkit-text-stroke-color: transparent;
+    text-shadow: 0 0 14px rgba(185, 255, 88, .85), 0 0 34px rgba(185, 255, 88, .5);
+  }
+  .footer-wordmark.is-visible .wm-line--sub::before { animation: none; }
+  .live-dot::before { animation: none; }
+  .hero-marquee b { animation: none; }
+}

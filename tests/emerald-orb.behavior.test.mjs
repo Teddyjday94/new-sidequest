@@ -3,19 +3,23 @@ import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import vm from 'node:vm';
 
-test('marks the supplied artwork as the safe orb fallback before WebGL enhancement', async () => {
+test('keeps the supplied artwork available when WebGL is unavailable', async () => {
   const source = await readFile(new URL('../app.js', import.meta.url), 'utf8');
   const listeners = new Map();
-  const orb = { dataset: {} };
-  const canvas = {};
+  const stage = { dataset: {} };
+  const orb = { parentElement: stage };
+  const canvas = { parentElement: stage, getContext() { return null; } };
   const document = {
     hidden: false,
     addEventListener(type, listener) { listeners.set(type, listener); },
+    createElement() { return {}; },
+    head: { appendChild() {} },
     getElementById(id) {
-      if (id === 'chrome-object') return canvas;
+      if (id === 'orb-canvas') return canvas;
       if (id === 'emerald-orb') return orb;
       return null;
     },
+    querySelector() { return null; },
     querySelectorAll() { return []; }
   };
   const window = {
@@ -23,13 +27,8 @@ test('marks the supplied artwork as the safe orb fallback before WebGL enhanceme
     addEventListener() {}
   };
 
-  vm.runInNewContext(source, { console: { warn() {} }, document, window, CustomEvent: class {} }, {
-    importModuleDynamically() {
-      return Promise.reject(new Error('WebGL dependency intentionally unavailable in this test'));
-    }
-  });
+  vm.runInNewContext(source, { console: { warn() {} }, document, window }, {});
   listeners.get('DOMContentLoaded')();
-  await Promise.resolve();
 
-  assert.equal(orb.dataset.orbMode, 'fallback');
+  assert.equal(stage.dataset.orbMode, 'fallback');
 });
